@@ -1,0 +1,31 @@
+{
+  "name": "@dicether/state-channel",
+  "version": "0.0.1",
+  "description": "state channel utils",
+  "main": "lib/src/index.js",
+  "types": "lib/src/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "tslint --project .",
+    "test": "mocha ./lib/test/**/*.js"
+  },
+  "author": "Dicether",
+  "license": "MIT",
+  "dependencies": {
+    "@dicether/eip712": "0.0.1",
+    "@types/ethereumjs-util": "^5.2.0",
+    "bignumber.js": "^5.0.0",
+    "ethereumjs-util": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/ethereumjs-util": "^5.2.0",
+    "@types/mocha": "^5.2.3",
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.0.0",
+    "typescript": "^2.9.2"
+  }
+}
