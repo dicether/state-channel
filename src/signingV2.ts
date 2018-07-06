@@ -18,7 +18,7 @@ const types = {
         {name: 'value', type: 'uint256'},
         {name: 'balance', type: 'int256'},
         {name: 'serverHash', type: 'bytes32'},
-        {name: 'playerHash', type: 'bytes32'},
+        {name: 'userHash', type: 'bytes32'},
         {name: 'gameId', type: 'uint256'},
     ],
 };
@@ -36,7 +36,7 @@ function createDomain(version: string, chainId: number, contractAddress: string)
 function convertBet(bet: Bet) {
     return {
         ...bet,
-        playerHash: bet.userHash,
+        userHash: bet.userHash,
         value: fromGweiToWei(bet.value).toString(),
         balance: fromGweiToWei(bet.balance).toString(),
         number: bet.num

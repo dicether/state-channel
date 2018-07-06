@@ -16,14 +16,14 @@ export const HOUSE_EDGE_DIVISOR = 10000;
 export enum GameStatus {
     ENDED = 0,
     ACTIVE = 1,
-    PLAYER_INITIATED_END = 2,
+    USER_INITIATED_END = 2,
     SERVER_INITIATED_END = 3
 }
 
 export enum ReasonEnded {
     REGULAR_ENDED = 0,
     END_FORCED_BY_SERVER = 1,
-    END_FORCED_BY_PLAYER = 2,
+    END_FORCED_BY_USER = 2,
 }
 
 export enum GameType {
@@ -63,11 +63,11 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
-export function calcResultNumber(gameType: number, serverSeed: string, playerSeed: string): number {
+export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string): number {
     const serverSeedBuf = ethUtil.toBuffer(serverSeed);
-    const playerSeedBuf = ethUtil.toBuffer(playerSeed);
+    const userSeedBuf = ethUtil.toBuffer(userSeed);
 
-    const seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, playerSeedBuf])) as Buffer;
+    const seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, userSeedBuf])) as Buffer;
     const hexSeed = seed.toString('hex');
     const rand = new BigNumber(hexSeed, 16);
 
@@ -81,9 +81,9 @@ export function calcResultNumber(gameType: number, serverSeed: string, playerSee
 }
 
 
-export function calcPlayerProfit(gameType: number, num: number, betValue: number, won: boolean): number {
+export function calcUserProfit(gameType: number, num: number, betValue: number, won: boolean): number {
     if (won) {
-        // player won
+        // user won
         const betValueBigNum = new BigNumber(betValue);
 
         let totalWon = new BigNumber(0);
@@ -115,12 +115,12 @@ export function hasWon(gameType: number, num: number, resultNum: number) {
     }
 }
 
-export function calcNewBalance(gameType: number, num: number, betValue: number, serverSeed: string, playerSeed: string,
+export function calcNewBalance(gameType: number, num: number, betValue: number, serverSeed: string, userSeed: string,
                                oldBalance: number): number {
-    const resultNum = calcResultNumber(gameType, serverSeed, playerSeed);
+    const resultNum = calcResultNumber(gameType, serverSeed, userSeed);
     const won = hasWon(gameType, num, resultNum);
     // calculated in
-    const profit = calcPlayerProfit(gameType, num, betValue, won);
+    const profit = calcUserProfit(gameType, num, betValue, won);
 
     return profit + oldBalance;
 }
@@ -177,7 +177,7 @@ export function verifySignature(bet: Bet, chainId: number, contractAddress: stri
 }
 
 export function signStartData(contractAddress: string,
-                              player: string,
+                              user: string,
                               lastGameId: number,
                               createBefore: number,
                               serverEndHash: string,
@@ -185,7 +185,7 @@ export function signStartData(contractAddress: string,
                               privateKey: Buffer): string {
     const hash = ethAbi.soliditySHA3(
         ["address", "address", "uint256", "uint256", "bytes32"],
-        [contractAddress, player, lastGameId, createBefore, ethUtil.toBuffer(serverEndHash)]
+        [contractAddress, user, lastGameId, createBefore, ethUtil.toBuffer(serverEndHash)]
     );
 
     const sig = ethUtil.ecsign(hash, privateKey);
