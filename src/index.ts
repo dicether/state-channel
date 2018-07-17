@@ -8,6 +8,7 @@ import {Bet} from "./types";
 
 
 export {BigNumber};
+export {Bet};
 
 export const RANGE = 100;
 export const HOUSE_EDGE = 150;
