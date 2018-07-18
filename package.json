@@ -11,6 +11,10 @@
   },
   "author": "Dicether",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dicether/state-channel"
+  },
   "dependencies": {
     "@dicether/eip712": "0.0.1",
     "@types/ethereumjs-util": "^5.2.0",
