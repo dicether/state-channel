@@ -23,8 +23,8 @@ export enum GameStatus {
 
 export enum ReasonEnded {
     REGULAR_ENDED = 0,
-    END_FORCED_BY_SERVER = 1,
-    END_FORCED_BY_USER = 2,
+    SERVER_FORCED_END = 1,
+    USER_FORCED_END = 2,
 }
 
 export enum GameType {
