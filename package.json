@@ -1,6 +1,6 @@
 {
   "name": "@dicether/state-channel",
-  "version": "0.0.1",
+  "version": "1.0.0-alpha.1",
   "description": "state channel utils",
   "main": "lib/src/index.js",
   "types": "lib/src/index.d.ts",
