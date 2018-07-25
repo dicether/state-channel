@@ -17,7 +17,7 @@ describe("hashBetV2", () => {
         };
 
         const hash = hashBet(bet,  123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", 2);
-        expect(hash).to.deep.equal(toBuffer("0x0ffce0d8084cb41476ec1c9e0101aae884cc994dc61cf5811340063aa47b99f5"));
+        expect(hash).to.deep.equal(toBuffer("0x9bb213c565dd498f7f88b46c352aab54484e399856bb33dc00ec83dfa4d8748b"));
     });
 
     it("test 2", () => {
@@ -33,7 +33,7 @@ describe("hashBetV2", () => {
         };
 
         const hash = hashBet(bet,  123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", 2);
-        expect(hash).to.deep.equal(toBuffer("0x1cf138af7b70cda38cb24c8aceb5fe8018a3768856afb2475fe6098438b88b3b"));
+        expect(hash).to.deep.equal(toBuffer("0xa68fa492829b6c4ff3b831b9c1500632ce2316b5c852812603a1b4a2edd50cd6"));
     });
 });
 
