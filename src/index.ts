@@ -25,6 +25,7 @@ export enum ReasonEnded {
     REGULAR_ENDED = 0,
     SERVER_FORCED_END = 1,
     USER_FORCED_END = 2,
+    CONFLICT_ENDED = 3
 }
 
 export enum GameType {
