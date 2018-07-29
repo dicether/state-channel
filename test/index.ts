@@ -53,10 +53,12 @@ describe("signBetV2", () => {
         const address = '0x29C76e6aD8f28BB1004902578Fb108c507Be341b';
         const privKeyHex = '0x4af1bceebf7f3634ec3cff8a2c38e51178d5d4ce585c52d6043e5e2cc3418bb0';
         const privKey = toBuffer(privKeyHex) as Buffer;
+        const refSig = "0xae9fe52346181191d857a137d60cd075f654d2e1b4b88b7df55f28c308809de0314edc28683175daefd1a633fca66a67e4349e7fa57c6f3b721f3cee3d0c3a111c";
 
         const sig = signBet(bet, 123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", privKey, 2);
         const addressRec = recoverBetSigner(bet, 123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", sig);
 
+        expect(sig).to.equal(refSig);
         expect(addressRec).to.equal(address)
     });
 });
@@ -111,10 +113,12 @@ describe("signBetV1", () => {
         const address = '0x29C76e6aD8f28BB1004902578Fb108c507Be341b';
         const privKeyHex = '0x4af1bceebf7f3634ec3cff8a2c38e51178d5d4ce585c52d6043e5e2cc3418bb0';
         const privKey = toBuffer(privKeyHex) as Buffer;
+        const refSig = "0x9e9af3a48c6fe0704c390958abd7353367a13184760878ead2afd4962a5a8c8376633790a3011897283c5fc68df098cc25de034be8e8dd744ccc8118050be19c1b";
 
         const sig = signBet(bet, 123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", privKey, 1);
         const addressRec = recoverBetSigner(bet, 123456789, "0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB", sig, 1);
 
+        expect(sig).to.equal(refSig);
         expect(addressRec).to.equal(address)
     });
 });
