@@ -16,7 +16,7 @@
     "url": "https://github.com/dicether/state-channel"
   },
   "dependencies": {
-    "@dicether/eip712": "0.0.1",
+    "@dicether/eip712": "0.0.2",
     "@types/ethereumjs-util": "^5.2.0",
     "bignumber.js": "^5.0.0",
     "ethereumjs-util": "^5.2.0"
