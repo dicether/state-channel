@@ -13,6 +13,7 @@ export {Bet};
 export const RANGE = 100;
 export const HOUSE_EDGE = 150;
 export const HOUSE_EDGE_DIVISOR = 10000;
+export const PROBABILITY_DIVISOR = 10000;
 
 export enum GameStatus {
     ENDED = 0,
@@ -63,6 +64,32 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
 
     const seedHashBuf = ethUtil.sha3(seedBuf);
     return seedHashRefBuf.equals(seedHashBuf);
+}
+
+
+export function maxBetFromProbability(winProbability: number, bankRoll: number, k = 2) {
+    const houseEdge = new BigNumber(HOUSE_EDGE);
+
+    const enumerator = houseEdge.mul(winProbability).mul(bankRoll);
+    const denominator = houseEdge.times(PROBABILITY_DIVISOR).add(new BigNumber(winProbability).times(HOUSE_EDGE_DIVISOR));
+
+    // round to 0.01 Ether
+    return enumerator.div(denominator).dividedToIntegerBy(k).add(5e6).dividedToIntegerBy(1e7).mul(1e7).toNumber();
+}
+
+
+export function calcWinProbability(gameType: number, num: number) {
+    switch (gameType) {
+        case GameType.DICE_LOWER: return num * PROBABILITY_DIVISOR / RANGE;
+        case GameType.DICE_HIGHER: return (RANGE - num - 1) * PROBABILITY_DIVISOR / RANGE;
+        default:
+            throw Error("Invalid game type!");
+    }
+}
+
+
+export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
+    return maxBetFromProbability(calcWinProbability(gameType, num), bankRoll, k);
 }
 
 export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string): number {
