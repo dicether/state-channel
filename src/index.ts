@@ -69,12 +69,22 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
 
 export function maxBetFromProbability(winProbability: number, bankRoll: number, k = 2) {
     const houseEdge = new BigNumber(HOUSE_EDGE);
+    const probabilityDivisor = new BigNumber(PROBABILITY_DIVISOR);
 
-    const enumerator = houseEdge.mul(winProbability).mul(bankRoll);
-    const denominator = houseEdge.times(PROBABILITY_DIVISOR).add(new BigNumber(winProbability).times(HOUSE_EDGE_DIVISOR));
+    const tmp1 = probabilityDivisor.times(HOUSE_EDGE_DIVISOR).dividedToIntegerBy(winProbability);
+    const tmp2 = probabilityDivisor.times(houseEdge).dividedToIntegerBy(winProbability);
 
-    // round to 0.01 Ether
-    return enumerator.div(denominator).dividedToIntegerBy(k).add(5e6).dividedToIntegerBy(1e7).mul(1e7).toNumber();
+    const enumerator = houseEdge.mul(bankRoll);
+    const denominator = tmp1.sub(tmp2).sub(HOUSE_EDGE_DIVISOR);
+
+    if (denominator.lt(0)) {
+        throw new Error("Invalid winProbability!");
+    }
+
+    const maxBetVal = enumerator.dividedToIntegerBy(denominator);
+
+    // round to 0.001 Ether
+    return maxBetVal.dividedToIntegerBy(k).add(5e5).dividedToIntegerBy(1e6).mul(1e6).toNumber();
 }
 
 
