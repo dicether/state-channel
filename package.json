@@ -7,7 +7,20 @@
   "scripts": {
     "build": "tsc",
     "lint": "tslint --project .",
+    "prettier": "prettier --write ./**/*.ts",
     "test": "mocha ./lib/test/**/*.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier --write",
+      "tslint --fix",
+      "git add"
+    ]
   },
   "author": "Dicether",
   "license": "MIT",
@@ -19,16 +32,19 @@
     "@dicether/eip712": "0.0.2",
     "@types/ethereumjs-util": "^5.2.0",
     "bignumber.js": "^5.0.0",
+    "ethereumjs-abi": "^0.6.5",
     "ethereumjs-util": "^5.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.1.4",
     "@types/ethereumjs-util": "^5.2.0",
     "@types/mocha": "^5.2.3",
-    "chai": "^4.1.2",
+    "chai": "^4.2.0",
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0",
     "mocha": "^5.2.0",
+    "prettier": "^1.14.3",
     "tslint": "^5.10.0",
-    "tslint-config-prettier": "^1.13.0",
     "tslint-config-standard": "^7.0.0",
     "typescript": "^2.9.2"
   }

@@ -1,11 +1,10 @@
 import * as ethAbi from "ethereumjs-abi";
-import * as ethUtil from 'ethereumjs-util';
+import * as ethUtil from "ethereumjs-util";
 
 import {BigNumber} from "./bignumber";
 import {createTypedDataV1, hashBetV1, recoverBetSignerV1, signBetV1} from "./signingV1";
 import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2} from "./signingV2";
 import {Bet} from "./types";
-
 
 export {BigNumber};
 export {Bet};
@@ -19,32 +18,31 @@ export enum GameStatus {
     ENDED = 0,
     ACTIVE = 1,
     USER_INITIATED_END = 2,
-    SERVER_INITIATED_END = 3
+    SERVER_INITIATED_END = 3,
 }
 
 export enum ReasonEnded {
     REGULAR_ENDED = 0,
     SERVER_FORCED_END = 1,
     USER_FORCED_END = 2,
-    CONFLICT_ENDED = 3
+    CONFLICT_ENDED = 3,
 }
 
 export enum GameType {
     NO_GAME = 0,
     DICE_LOWER = 1,
-    DICE_HIGHER = 2
+    DICE_HIGHER = 2,
 }
 
-
 export function fromWeiToGwei(value: BigNumber) {
-    return value.div(1e9).toNumber()
+    return value.div(1e9).toNumber();
 }
 
 export function fromGweiToWei(value: number) {
     return new BigNumber(value).times(1e9);
 }
 
-export function createHashChain(seed: string, len = 1000): Array<string> {
+export function createHashChain(seed: string, len = 1000): string[] {
     const result = [ethUtil.toBuffer(seed)];
     for (let i = 0; i < len; i++) {
         result.unshift(ethUtil.sha3(result[0]));
@@ -66,7 +64,6 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
-
 export function maxBetFromProbability(winProbability: number, bankRoll: number, k = 2) {
     const houseEdge = new BigNumber(HOUSE_EDGE);
     const probabilityDivisor = new BigNumber(PROBABILITY_DIVISOR);
@@ -84,19 +81,24 @@ export function maxBetFromProbability(winProbability: number, bankRoll: number, 
     const maxBetVal = enumerator.dividedToIntegerBy(denominator);
 
     // round to 0.001 Ether
-    return maxBetVal.dividedToIntegerBy(k).add(5e5).dividedToIntegerBy(1e6).mul(1e6).toNumber();
+    return maxBetVal
+        .dividedToIntegerBy(k)
+        .add(5e5)
+        .dividedToIntegerBy(1e6)
+        .mul(1e6)
+        .toNumber();
 }
-
 
 export function calcWinProbability(gameType: number, num: number) {
     switch (gameType) {
-        case GameType.DICE_LOWER: return num * PROBABILITY_DIVISOR / RANGE;
-        case GameType.DICE_HIGHER: return (RANGE - num - 1) * PROBABILITY_DIVISOR / RANGE;
+        case GameType.DICE_LOWER:
+            return (num * PROBABILITY_DIVISOR) / RANGE;
+        case GameType.DICE_HIGHER:
+            return ((RANGE - num - 1) * PROBABILITY_DIVISOR) / RANGE;
         default:
             throw Error("Invalid game type!");
     }
 }
-
 
 export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
     return maxBetFromProbability(calcWinProbability(gameType, num), bankRoll, k);
@@ -107,7 +109,7 @@ export function calcResultNumber(gameType: number, serverSeed: string, userSeed:
     const userSeedBuf = ethUtil.toBuffer(userSeed);
 
     const seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, userSeedBuf])) as Buffer;
-    const hexSeed = seed.toString('hex');
+    const hexSeed = seed.toString("hex");
     const rand = new BigNumber(hexSeed, 16);
 
     switch (gameType) {
@@ -118,7 +120,6 @@ export function calcResultNumber(gameType: number, serverSeed: string, userSeed:
             throw Error("Invalid game type!");
     }
 }
-
 
 export function calcUserProfit(gameType: number, num: number, betValue: number, won: boolean): number {
     if (won) {
@@ -132,15 +133,21 @@ export function calcUserProfit(gameType: number, num: number, betValue: number, 
                 totalWon = betValueBigNum.times(new BigNumber(RANGE)).dividedToIntegerBy(new BigNumber(num));
                 break;
             case GameType.DICE_HIGHER:
-                totalWon = betValueBigNum.times(new BigNumber(RANGE)).dividedToIntegerBy(new BigNumber(RANGE - num - 1));
+                totalWon = betValueBigNum
+                    .times(new BigNumber(RANGE))
+                    .dividedToIntegerBy(new BigNumber(RANGE - num - 1));
                 break;
             default:
                 throw Error("Invalid game type!");
-
         }
 
-        const houseEdge = totalWon.times(new BigNumber(HOUSE_EDGE)).dividedToIntegerBy(new BigNumber(HOUSE_EDGE_DIVISOR));
-        return totalWon.minus(houseEdge).minus(betValueBigNum).toNumber();
+        const houseEdge = totalWon
+            .times(new BigNumber(HOUSE_EDGE))
+            .dividedToIntegerBy(new BigNumber(HOUSE_EDGE_DIVISOR));
+        return totalWon
+            .minus(houseEdge)
+            .minus(betValueBigNum)
+            .toNumber();
     } else {
         return -betValue;
     }
@@ -148,14 +155,23 @@ export function calcUserProfit(gameType: number, num: number, betValue: number, 
 
 export function hasWon(gameType: number, num: number, resultNum: number) {
     switch (gameType) {
-        case GameType.DICE_LOWER: return resultNum < num;
-        case GameType.DICE_HIGHER: return resultNum > num;
-        default: throw Error("Invalid game type");
+        case GameType.DICE_LOWER:
+            return resultNum < num;
+        case GameType.DICE_HIGHER:
+            return resultNum > num;
+        default:
+            throw Error("Invalid game type");
     }
 }
 
-export function calcNewBalance(gameType: number, num: number, betValue: number, serverSeed: string, userSeed: string,
-                               oldBalance: number): number {
+export function calcNewBalance(
+    gameType: number,
+    num: number,
+    betValue: number,
+    serverSeed: string,
+    userSeed: string,
+    oldBalance: number
+): number {
     const resultNum = calcResultNumber(gameType, serverSeed, userSeed);
     const won = hasWon(gameType, num, resultNum);
     // calculated in
@@ -165,9 +181,9 @@ export function calcNewBalance(gameType: number, num: number, betValue: number, 
 }
 
 export function createTypedData(bet: Bet, chainId: number, contractAddress: string, version = 2) {
-    switch(version) {
+    switch (version) {
         case 1:
-            return createTypedDataV1(bet, contractAddress,);
+            return createTypedDataV1(bet, contractAddress);
         case 2:
             return createTypedDataV2(bet, "2", chainId, contractAddress);
         default:
@@ -175,9 +191,8 @@ export function createTypedData(bet: Bet, chainId: number, contractAddress: stri
     }
 }
 
-
 export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2) {
-      switch (version) {
+    switch (version) {
         case 1:
             return hashBetV1(bet, contractAddress);
         case 2:
@@ -186,7 +201,6 @@ export function hashBet(bet: Bet, chainId: number, contractAddress: string, vers
             throw Error("Invalid signature version!");
     }
 }
-
 
 export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: Buffer, version = 2) {
     switch (version) {
@@ -199,7 +213,6 @@ export function signBet(bet: Bet, chainId: number, contractAddress: string, priv
     }
 }
 
-
 export function recoverBetSigner(bet: Bet, chainId: number, contractAddress: string, signature: string, version = 2) {
     switch (version) {
         case 1:
@@ -211,17 +224,26 @@ export function recoverBetSigner(bet: Bet, chainId: number, contractAddress: str
     }
 }
 
-export function verifySignature(bet: Bet, chainId: number, contractAddress: string, signature: string, address: string, version = 2) {
+export function verifySignature(
+    bet: Bet,
+    chainId: number,
+    contractAddress: string,
+    signature: string,
+    address: string,
+    version = 2
+) {
     return recoverBetSigner(bet, chainId, contractAddress, signature, version) === address;
 }
 
-export function signStartData(contractAddress: string,
-                              user: string,
-                              lastGameId: number,
-                              createBefore: number,
-                              serverEndHash: string,
-                              serverAccount: string,
-                              privateKey: Buffer): string {
+export function signStartData(
+    contractAddress: string,
+    user: string,
+    lastGameId: number,
+    createBefore: number,
+    serverEndHash: string,
+    serverAccount: string,
+    privateKey: Buffer
+): string {
     const hash = ethAbi.soliditySHA3(
         ["address", "address", "uint256", "uint256", "bytes32"],
         [contractAddress, user, lastGameId, createBefore, ethUtil.toBuffer(serverEndHash)]
