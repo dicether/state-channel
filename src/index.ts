@@ -35,6 +35,7 @@ export enum GameType {
     DICE_LOWER = 1,
     DICE_HIGHER = 2,
     CHOOSE_FROM_12 = 3,
+    FLIP_A_COIN = 4,
 }
 
 export function getSelectedCoins(num: number) {
