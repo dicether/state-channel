@@ -2,6 +2,7 @@ import * as ethAbi from "ethereumjs-abi";
 import * as ethUtil from "ethereumjs-util";
 
 import {BigNumber} from "./bignumber";
+import {getGameImplementation} from "./games";
 import {createTypedDataV1, hashBetV1, recoverBetSignerV1, signBetV1} from "./signingV1";
 import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2} from "./signingV2";
 import {Bet} from "./types";
@@ -64,104 +65,20 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
-export function maxBetFromProbability(winProbability: number, bankRoll: number, k = 2) {
-    const houseEdge = new BigNumber(HOUSE_EDGE);
-    const probabilityDivisor = new BigNumber(PROBABILITY_DIVISOR);
-
-    const tmp1 = probabilityDivisor.times(HOUSE_EDGE_DIVISOR).dividedToIntegerBy(winProbability);
-    const tmp2 = probabilityDivisor.times(houseEdge).dividedToIntegerBy(winProbability);
-
-    const enumerator = houseEdge.mul(bankRoll);
-    const denominator = tmp1.sub(tmp2).sub(HOUSE_EDGE_DIVISOR);
-
-    if (denominator.lt(0)) {
-        throw new Error("Invalid winProbability!");
-    }
-
-    const maxBetVal = enumerator.dividedToIntegerBy(denominator);
-
-    // round to 0.001 Ether
-    return maxBetVal
-        .dividedToIntegerBy(k)
-        .add(5e5)
-        .dividedToIntegerBy(1e6)
-        .mul(1e6)
-        .toNumber();
-}
-
-export function calcWinProbability(gameType: number, num: number) {
-    switch (gameType) {
-        case GameType.DICE_LOWER:
-            return (num * PROBABILITY_DIVISOR) / RANGE;
-        case GameType.DICE_HIGHER:
-            return ((RANGE - num - 1) * PROBABILITY_DIVISOR) / RANGE;
-        default:
-            throw Error("Invalid game type!");
-    }
-}
-
 export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
-    return maxBetFromProbability(calcWinProbability(gameType, num), bankRoll, k);
+    return getGameImplementation(gameType).maxBet(num, bankRoll) / k;
 }
 
-export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string): number {
-    const serverSeedBuf = ethUtil.toBuffer(serverSeed);
-    const userSeedBuf = ethUtil.toBuffer(userSeed);
-
-    const seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, userSeedBuf])) as Buffer;
-    const hexSeed = seed.toString("hex");
-    const rand = new BigNumber(hexSeed, 16);
-
-    switch (gameType) {
-        case GameType.DICE_LOWER:
-        case GameType.DICE_HIGHER:
-            return rand.mod(new BigNumber(RANGE)).toNumber();
-        default:
-            throw Error("Invalid game type!");
-    }
+export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string, num: number): number {
+    return getGameImplementation(gameType).resultNumber(serverSeed, userSeed, num);
 }
 
-export function calcUserProfit(gameType: number, num: number, betValue: number, won: boolean): number {
-    if (won) {
-        // user won
-        const betValueBigNum = new BigNumber(betValue);
-
-        let totalWon = new BigNumber(0);
-
-        switch (gameType) {
-            case GameType.DICE_LOWER:
-                totalWon = betValueBigNum.times(new BigNumber(RANGE)).dividedToIntegerBy(new BigNumber(num));
-                break;
-            case GameType.DICE_HIGHER:
-                totalWon = betValueBigNum
-                    .times(new BigNumber(RANGE))
-                    .dividedToIntegerBy(new BigNumber(RANGE - num - 1));
-                break;
-            default:
-                throw Error("Invalid game type!");
-        }
-
-        const houseEdge = totalWon
-            .times(new BigNumber(HOUSE_EDGE))
-            .dividedToIntegerBy(new BigNumber(HOUSE_EDGE_DIVISOR));
-        return totalWon
-            .minus(houseEdge)
-            .minus(betValueBigNum)
-            .toNumber();
-    } else {
-        return -betValue;
-    }
+export function calcUserProfit(gameType: number, num: number, betValue: number, resultNum: number): number {
+    return getGameImplementation(gameType).userProfit(num, betValue, resultNum);
 }
 
-export function hasWon(gameType: number, num: number, resultNum: number) {
-    switch (gameType) {
-        case GameType.DICE_LOWER:
-            return resultNum < num;
-        case GameType.DICE_HIGHER:
-            return resultNum > num;
-        default:
-            throw Error("Invalid game type");
-    }
+export function calcMaxUserProfit(gameType: number, num: number, betValue: number): number {
+    return getGameImplementation(gameType).maxUserProfit(num, betValue);
 }
 
 export function calcNewBalance(
@@ -172,10 +89,8 @@ export function calcNewBalance(
     userSeed: string,
     oldBalance: number
 ): number {
-    const resultNum = calcResultNumber(gameType, serverSeed, userSeed);
-    const won = hasWon(gameType, num, resultNum);
-    // calculated in
-    const profit = calcUserProfit(gameType, num, betValue, won);
+    const resultNum = calcResultNumber(gameType, serverSeed, userSeed, num);
+    const profit = calcUserProfit(gameType, num, betValue, resultNum);
 
     return profit + oldBalance;
 }
