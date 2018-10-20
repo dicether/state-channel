@@ -14,6 +14,7 @@ export const RANGE = 100;
 export const HOUSE_EDGE = 150;
 export const HOUSE_EDGE_DIVISOR = 10000;
 export const PROBABILITY_DIVISOR = 10000;
+export const CHOOSE_FROM_12_NUMS = 12;
 
 export enum GameStatus {
     ENDED = 0,
@@ -33,6 +34,26 @@ export enum GameType {
     NO_GAME = 0,
     DICE_LOWER = 1,
     DICE_HIGHER = 2,
+    CHOOSE_FROM_12 = 3,
+}
+
+export function getSelectedCoins(num: number) {
+    const result: boolean[] = [];
+
+    for (let i = 0; i < CHOOSE_FROM_12_NUMS; i++) {
+        // tslint:disable-next-line:no-bitwise
+        if (num & (1 << i)) {
+            result.push(true);
+        } else {
+            result.push(false);
+        }
+    }
+
+    return result;
+}
+
+export function getNumSelectedCoins(num: number) {
+    return getSelectedCoins(num).filter(x => x === true).length;
 }
 
 export function fromWeiToGwei(value: BigNumber) {
