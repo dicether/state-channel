@@ -66,7 +66,15 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
 }
 
 export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
-    return getGameImplementation(gameType).maxBet(num, bankRoll) / k;
+    const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
+
+    // round to 0.001 Ether
+    return new BigNumber(maxBetValue)
+        .dividedToIntegerBy(k)
+        .add(5e5)
+        .dividedToIntegerBy(1e6)
+        .mul(1e6)
+        .toNumber();
 }
 
 export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string, num: number): number {

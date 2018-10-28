@@ -3,7 +3,7 @@ import * as ethUtil from "ethereumjs-util";
 
 import {HOUSE_EDGE, HOUSE_EDGE_DIVISOR, PROBABILITY_DIVISOR} from "../index";
 
-export function maxBetFromProbability(winProbability: number, bankRoll: number, k = 2) {
+export function maxBetFromProbability(winProbability: number, bankRoll: number) {
     const houseEdge = new BigNumber(HOUSE_EDGE);
     const probabilityDivisor = new BigNumber(PROBABILITY_DIVISOR);
 
@@ -17,15 +17,7 @@ export function maxBetFromProbability(winProbability: number, bankRoll: number, 
         throw new Error("Invalid winProbability!");
     }
 
-    const maxBetVal = enumerator.dividedToIntegerBy(denominator);
-
-    // round to 0.001 Ether
-    return maxBetVal
-        .dividedToIntegerBy(k)
-        .add(5e5)
-        .dividedToIntegerBy(1e6)
-        .mul(1e6)
-        .toNumber();
+    return enumerator.dividedToIntegerBy(denominator).toNumber();
 }
 
 export function generateRandomNumber(serverSeed: string, userSeed: string): BigNumber {
