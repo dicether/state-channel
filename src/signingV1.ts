@@ -1,8 +1,7 @@
-import {recoverTypedDataOld, signTypedDataOld, typedDataHashOld} from "@dicether/eip712";
+import {hashTypedDataLegacy, recoverTypedDataLegacy, signTypedDataLegacy} from "@dicether/eip712";
 
 import {fromGweiToWei} from "./index";
 import {Bet} from "./types";
-
 
 export function createTypedDataV1(bet: Bet, contractAddress: string) {
     return [
@@ -56,15 +55,15 @@ export function createTypedDataV1(bet: Bet, contractAddress: string) {
 
 export function signBetV1(bet: Bet, contractAddress: string, privateKey: Buffer) {
     const typedData = createTypedDataV1(bet, contractAddress);
-    return signTypedDataOld(typedData, privateKey);
+    return signTypedDataLegacy(typedData, privateKey);
 }
 
 export function hashBetV1(bet: Bet, contractAddress: string) {
     const typedData = createTypedDataV1(bet, contractAddress);
-    return typedDataHashOld(typedData);
+    return hashTypedDataLegacy(typedData);
 }
 
 export function recoverBetSignerV1(bet: Bet, contractAddress: string, signature: string): string {
     const typedData = createTypedDataV1(bet, contractAddress);
-    return recoverTypedDataOld(typedData, signature);
+    return recoverTypedDataLegacy(typedData, signature);
 }

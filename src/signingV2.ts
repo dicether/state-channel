@@ -1,4 +1,4 @@
-import {recoverTypedData, signTypedData, typedDataHash} from "@dicether/eip712";
+import {hashTypedData, recoverTypedData, signTypedData} from "@dicether/eip712";
 
 import {fromGweiToWei} from "./index";
 import {Bet} from "./types";
@@ -58,7 +58,7 @@ export function signBetV2(bet: Bet, version: string, chainId: number, contractAd
 
 export function hashBetV2(bet: Bet, version: string, chainId: number, contractAddress: string) {
     const data = createTypedDataV2(bet, version, chainId, contractAddress);
-    return typedDataHash(data);
+    return hashTypedData(data);
 }
 
 export function recoverBetSignerV2(
