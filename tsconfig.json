@@ -8,6 +8,8 @@
     ],
     "sourceMap": true,
     "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "noImplicitReturns": true,
     "pretty": true,

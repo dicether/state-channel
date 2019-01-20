@@ -1,4 +1,4 @@
-import {BigNumber} from "bignumber.js";
+import BN from "bn.js";
 
 import {CHOOSE_FROM_12_NUMS, getNumSelectedCoins, PROBABILITY_DIVISOR} from "../index";
 import {IGame} from "./IGame";
@@ -14,24 +14,24 @@ function throwOnInvalidNum(num: number) {
 class ChooseFrom12 implements IGame {
     maxBet(num: number, bankRoll: number) {
         throwOnInvalidNum(num);
-        const winProbability = new BigNumber(getNumSelectedCoins(num) * PROBABILITY_DIVISOR)
-            .dividedToIntegerBy(CHOOSE_FROM_12_NUMS)
+        const winProbability = new BN(getNumSelectedCoins(num) * PROBABILITY_DIVISOR)
+            .divn(CHOOSE_FROM_12_NUMS)
             .toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
     resultNumber(serverSeed: string, userSeed: string) {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        return randomNumber.mod(CHOOSE_FROM_12_NUMS).toNumber();
+        return randomNumber.modn(CHOOSE_FROM_12_NUMS);
     }
 
     userProfit(num: number, betValue: number, resultNum: number) {
         throwOnInvalidNum(num);
         const won = (num & (1 << resultNum)) > 0; // tslint:disable-line:no-bitwise
         if (won) {
-            const totalWon = new BigNumber(betValue)
-                .times(CHOOSE_FROM_12_NUMS)
-                .dividedToIntegerBy(getNumSelectedCoins(num));
+            const totalWon = new BN(betValue)
+                .muln(CHOOSE_FROM_12_NUMS)
+                .divn(getNumSelectedCoins(num));
             return profitFromTotalWon(totalWon, betValue);
         } else {
             return -betValue;
@@ -39,9 +39,9 @@ class ChooseFrom12 implements IGame {
     }
 
     maxUserProfit(num: number, betValue: number) {
-        const totalWon = new BigNumber(betValue)
-            .times(CHOOSE_FROM_12_NUMS)
-            .dividedToIntegerBy(getNumSelectedCoins(num));
+        const totalWon = new BN(betValue)
+            .muln(CHOOSE_FROM_12_NUMS)
+            .divn(getNumSelectedCoins(num));
         return profitFromTotalWon(totalWon, betValue);
     }
 }

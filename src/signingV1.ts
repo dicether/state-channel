@@ -1,9 +1,8 @@
 import {recoverTypedDataOld, signTypedDataOld, typedDataHashOld} from "@dicether/eip712";
 
-import {BigNumber} from "./bignumber";
+import {fromGweiToWei} from "./index";
 import {Bet} from "./types";
 
-const BASE_TO_WEI = 1e9;
 
 export function createTypedDataV1(bet: Bet, contractAddress: string) {
     return [
@@ -25,12 +24,12 @@ export function createTypedDataV1(bet: Bet, contractAddress: string) {
         {
             type: "uint",
             name: "Value (Wei)",
-            value: new BigNumber(bet.value).times(BASE_TO_WEI).toString(),
+            value: fromGweiToWei(bet.value),
         },
         {
             type: "int",
             name: "Current Balance (Wei)",
-            value: new BigNumber(bet.balance).times(BASE_TO_WEI).toString(),
+            value: fromGweiToWei(bet.balance),
         },
         {
             type: "bytes32",

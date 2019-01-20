@@ -1,13 +1,12 @@
+import BN from "bn.js";
 import * as ethAbi from "ethereumjs-abi";
 import * as ethUtil from "ethereumjs-util";
 
-import {BigNumber} from "./bignumber";
 import {getGameImplementation} from "./games";
 import {createTypedDataV1, hashBetV1, recoverBetSignerV1, signBetV1} from "./signingV1";
 import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2} from "./signingV2";
 import {Bet} from "./types";
 
-export {BigNumber};
 export {Bet};
 
 export const RANGE = 100;
@@ -57,12 +56,12 @@ export function getNumSelectedCoins(num: number) {
     return getSelectedCoins(num).filter(x => x === true).length;
 }
 
-export function fromWeiToGwei(value: BigNumber) {
-    return value.div(1e9).toNumber();
+export function fromWeiToGwei(value: string) {
+    return new BN(value).div(new BN(1e9)).toNumber();
 }
 
 export function fromGweiToWei(value: number) {
-    return new BigNumber(value).times(1e9);
+    return new BN(value).mul(new BN(1e9)).toString();
 }
 
 export function createHashChain(seed: string, len = 1000): string[] {
@@ -91,11 +90,11 @@ export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
     const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
 
     // round to 0.001 Ether
-    return new BigNumber(maxBetValue)
-        .dividedToIntegerBy(k)
-        .add(5e5)
-        .dividedToIntegerBy(1e6)
-        .mul(1e6)
+    return new BN(maxBetValue)
+        .divn(k)
+        .addn(5e5)
+        .divn(1e6)
+        .muln(1e6)
         .toNumber();
 }
 
