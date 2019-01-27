@@ -8,6 +8,7 @@ import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2} from "./sig
 import {Bet} from "./types";
 
 export {Bet};
+export * from "./games/Keno";
 
 export const RANGE = 100;
 export const HOUSE_EDGE = 150;
@@ -35,6 +36,7 @@ export enum GameType {
     DICE_HIGHER = 2,
     CHOOSE_FROM_12 = 3,
     FLIP_A_COIN = 4,
+    KENO = 5,
 }
 
 export function getSelectedCoins(num: number) {
@@ -50,6 +52,29 @@ export function getSelectedCoins(num: number) {
     }
 
     return result;
+}
+
+export function getSelectedBits(num: number) {
+    const result: boolean[] = [];
+
+    for (let i = 0; i < 52; i++) {
+        if (
+            new BN(1)
+                .shln(i)
+                .and(new BN(num))
+                .toNumber()
+        ) {
+            result.push(true);
+        } else {
+            result.push(false);
+        }
+    }
+
+    return result;
+}
+
+export function getNumSetBits(num: number) {
+    return getSelectedBits(num).filter(x => x === true).length;
 }
 
 export function getNumSelectedCoins(num: number) {
