@@ -39,22 +39,7 @@ export enum GameType {
     KENO = 5,
 }
 
-export function getSelectedCoins(num: number) {
-    const result: boolean[] = [];
-
-    for (let i = 0; i < CHOOSE_FROM_12_NUMS; i++) {
-        // tslint:disable-next-line:no-bitwise
-        if (num & (1 << i)) {
-            result.push(true);
-        } else {
-            result.push(false);
-        }
-    }
-
-    return result;
-}
-
-export function getSelectedBits(num: number) {
+export function getSetBits(num: number) {
     const result: boolean[] = [];
 
     for (let i = 0; i < 52; i++) {
@@ -74,11 +59,7 @@ export function getSelectedBits(num: number) {
 }
 
 export function getNumSetBits(num: number) {
-    return getSelectedBits(num).filter(x => x === true).length;
-}
-
-export function getNumSelectedCoins(num: number) {
-    return getSelectedCoins(num).filter(x => x === true).length;
+    return getSetBits(num).filter(x => x === true).length;
 }
 
 export function fromWeiToGwei(value: string) {

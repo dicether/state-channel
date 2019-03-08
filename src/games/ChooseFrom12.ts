@@ -1,6 +1,6 @@
 import BN from "bn.js";
 
-import {CHOOSE_FROM_12_NUMS, getNumSelectedCoins, PROBABILITY_DIVISOR} from "../index";
+import {CHOOSE_FROM_12_NUMS, getNumSetBits, PROBABILITY_DIVISOR} from "../index";
 import {IGame} from "./IGame";
 import {generateRandomNumber, maxBetFromProbability, profitFromTotalWon} from "./utilities";
 
@@ -14,7 +14,7 @@ function throwOnInvalidNum(num: number) {
 class ChooseFrom12 implements IGame {
     maxBet(num: number, bankRoll: number) {
         throwOnInvalidNum(num);
-        const winProbability = new BN(getNumSelectedCoins(num) * PROBABILITY_DIVISOR)
+        const winProbability = new BN(getNumSetBits(num) * PROBABILITY_DIVISOR)
             .divn(CHOOSE_FROM_12_NUMS)
             .toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
@@ -31,7 +31,7 @@ class ChooseFrom12 implements IGame {
         if (won) {
             const totalWon = new BN(betValue)
                 .muln(CHOOSE_FROM_12_NUMS)
-                .divn(getNumSelectedCoins(num));
+                .divn(getNumSetBits(num));
             return profitFromTotalWon(totalWon, betValue);
         } else {
             return -betValue;
@@ -41,7 +41,7 @@ class ChooseFrom12 implements IGame {
     maxUserProfit(num: number, betValue: number) {
         const totalWon = new BN(betValue)
             .muln(CHOOSE_FROM_12_NUMS)
-            .divn(getNumSelectedCoins(num));
+            .divn(getNumSetBits(num));
         return profitFromTotalWon(totalWon, betValue);
     }
 }
