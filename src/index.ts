@@ -137,7 +137,7 @@ export function createTypedData(bet: Bet, chainId: number, contractAddress: stri
         case 2:
             return createTypedDataV2(bet, "2", chainId, contractAddress);
         default:
-            throw Error("Invalid signature version!");
+            throw new Error("Invalid signature version!");
     }
 }
 
@@ -148,7 +148,7 @@ export function hashBet(bet: Bet, chainId: number, contractAddress: string, vers
         case 2:
             return hashBetV2(bet, "2", chainId, contractAddress);
         default:
-            throw Error("Invalid signature version!");
+            throw new Error("Invalid signature version!");
     }
 }
 
@@ -159,7 +159,7 @@ export function signBet(bet: Bet, chainId: number, contractAddress: string, priv
         case 2:
             return signBetV2(bet, "2", chainId, contractAddress, privateKey);
         default:
-            throw Error("Invalid signature version!");
+            throw new Error("Invalid signature version!");
     }
 }
 
@@ -170,7 +170,7 @@ export function recoverBetSigner(bet: Bet, chainId: number, contractAddress: str
         case 2:
             return recoverBetSignerV2(bet, "2", chainId, contractAddress, signature);
         default:
-            throw Error("Invalid signature version!");
+            throw new Error("Invalid signature version!");
     }
 }
 
