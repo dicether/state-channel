@@ -4,6 +4,7 @@ import DiceLower from "./DiceLower";
 import FlipACoin from "./FlipACoin";
 import {IGame} from "./IGame";
 import Keno from "./Keno";
+import Wheel from "./Wheel";
 
 const games: {[gameType: number]: IGame} = {
     1: new DiceLower(),
@@ -11,6 +12,7 @@ const games: {[gameType: number]: IGame} = {
     3: new ChooseFrom12(),
     4: new FlipACoin(),
     5: new Keno(),
+    6: new Wheel(),
 };
 
 export function getGameImplementation(gameType: number): IGame {

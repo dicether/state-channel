@@ -9,6 +9,7 @@ import {Bet} from "./types";
 
 export {Bet};
 export * from "./games/Keno";
+export * from "./games/Wheel";
 
 export const RANGE = 100;
 export const HOUSE_EDGE = 150;
@@ -37,6 +38,7 @@ export enum GameType {
     CHOOSE_FROM_12 = 3,
     FLIP_A_COIN = 4,
     KENO = 5,
+    WHEEL = 6,
 }
 
 export function getSetBits(num: number) {
