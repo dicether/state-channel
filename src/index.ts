@@ -94,7 +94,7 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
-export function maxBet(gameType: number, num: number, bankRoll: number, k = 2) {
+export function maxBet(gameType: number, num: number, bankRoll: number, k: number) {
     const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
 
     // round to 0.001 Ether
