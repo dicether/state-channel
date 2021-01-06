@@ -26,4 +26,5 @@ export enum GameType {
     FLIP_A_COIN = 4,
     KENO = 5,
     WHEEL = 6,
+    PLINKO = 7,
 }

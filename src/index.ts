@@ -10,6 +10,7 @@ import {Bet} from "./types";
 export {Bet};
 export * from "./games/Keno";
 export * from "./games/Wheel";
+export * from "./games/Plinko";
 export * from "./constants";
 export * from "./utilities";
 
