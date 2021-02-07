@@ -97,10 +97,9 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
 export function maxBet(gameType: number, num: number, bankRoll: number, k: number) {
     const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
 
-    // round to 0.001 Ether
+    // round down to 0.001 Ether
     return new BN(maxBetValue)
         .divn(k)
-        .addn(5e5)
         .divn(1e6)
         .muln(1e6)
         .toNumber();
