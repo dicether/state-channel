@@ -10,67 +10,8 @@ import {Bet} from "./types";
 export {Bet};
 export * from "./games/Keno";
 export * from "./games/Wheel";
-
-export const RANGE = 100;
-export const HOUSE_EDGE = 150;
-export const HOUSE_EDGE_DIVISOR = 10000;
-export const PROBABILITY_DIVISOR = 10000;
-export const CHOOSE_FROM_12_NUMS = 12;
-
-export enum GameStatus {
-    ENDED = 0,
-    ACTIVE = 1,
-    USER_INITIATED_END = 2,
-    SERVER_INITIATED_END = 3,
-}
-
-export enum ReasonEnded {
-    REGULAR_ENDED = 0,
-    SERVER_FORCED_END = 1,
-    USER_FORCED_END = 2,
-    CONFLICT_ENDED = 3,
-}
-
-export enum GameType {
-    NO_GAME = 0,
-    DICE_LOWER = 1,
-    DICE_HIGHER = 2,
-    CHOOSE_FROM_12 = 3,
-    FLIP_A_COIN = 4,
-    KENO = 5,
-    WHEEL = 6,
-}
-
-export function getSetBits(num: number) {
-    const result: boolean[] = [];
-
-    for (let i = 0; i < 52; i++) {
-        if (
-            new BN(1)
-                .shln(i)
-                .and(new BN(num))
-                .toNumber()
-        ) {
-            result.push(true);
-        } else {
-            result.push(false);
-        }
-    }
-
-    return result;
-}
-
-export function getNumSetBits(num: number) {
-    return getSetBits(num).filter(x => x === true).length;
-}
-
-export function fromWeiToGwei(value: string) {
-    return new BN(value).div(new BN(1e9)).toNumber();
-}
-
-export function fromGweiToWei(value: number) {
-    return new BN(value).mul(new BN(1e9)).toString();
-}
+export * from "./constants";
+export * from "./utilities";
 
 export function createHashChain(seed: string, len = 1000): string[] {
     const result = [ethUtil.toBuffer(seed)];
@@ -79,11 +20,6 @@ export function createHashChain(seed: string, len = 1000): string[] {
     }
 
     return result.map(val => ethUtil.bufferToHex(val));
-}
-
-export function keccak(data: string): string {
-    ethUtil.toBuffer(data);
-    return ethUtil.bufferToHex(ethUtil.sha3(data));
 }
 
 export function verifySeed(seed: string, seedHashRef: string): boolean {

@@ -1,6 +1,6 @@
 import BN from "bn.js";
 
-import {PROBABILITY_DIVISOR, RANGE} from "../index";
+import {PROBABILITY_DIVISOR, RANGE} from "../constants";
 import {IGame} from "./IGame";
 import {generateRandomNumber, maxBetFromProbability, profitFromTotalWon} from "./utilities";
 

@@ -1,7 +1,7 @@
 import {hashTypedData, recoverTypedData, signTypedData} from "@dicether/eip712";
 
-import {fromGweiToWei} from "./index";
 import {Bet} from "./types";
+import {fromGweiToWei} from "./utilities";
 
 const types = {
     EIP712Domain: [

@@ -1,7 +1,7 @@
 import BN from "bn.js";
 import * as ethUtil from "ethereumjs-util";
 
-import {getNumSetBits} from "../index";
+import {getNumSetBits} from "../utilities";
 import {IGame} from "./IGame";
 
 export const KENO_DIVIDER = 1000;

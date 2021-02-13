@@ -1,7 +1,7 @@
 import {hashTypedDataLegacy, recoverTypedDataLegacy, signTypedDataLegacy} from "@dicether/eip712";
 
-import {fromGweiToWei} from "./index";
 import {Bet} from "./types";
+import {fromGweiToWei} from "./utilities";
 
 export function createTypedDataV1(bet: Bet, contractAddress: string) {
     return [

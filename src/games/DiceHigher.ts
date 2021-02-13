@@ -1,6 +1,6 @@
 import BN from "bn.js";
 
-import {PROBABILITY_DIVISOR, RANGE} from "../index";
+import {PROBABILITY_DIVISOR, RANGE} from "../constants";
 import {IGame} from "./IGame";
 import {generateRandomNumber, maxBetFromProbability, profitFromTotalWon} from "./utilities";
 
@@ -13,9 +13,7 @@ function throwOnInvalidNum(num: number) {
 class DiceHigher implements IGame {
     maxBet(num: number, bankRoll: number) {
         throwOnInvalidNum(num);
-        const winProbability = new BN((RANGE - num - 1) * PROBABILITY_DIVISOR)
-            .divn(RANGE)
-            .toNumber();
+        const winProbability = new BN((RANGE - num - 1) * PROBABILITY_DIVISOR).divn(RANGE).toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
@@ -28,9 +26,7 @@ class DiceHigher implements IGame {
         throwOnInvalidNum(num);
         const won = resultNum > num;
         if (won) {
-            const totalWon = new BN(betValue)
-                .muln(RANGE)
-                .divn(RANGE - num - 1);
+            const totalWon = new BN(betValue).muln(RANGE).divn(RANGE - num - 1);
             return profitFromTotalWon(totalWon, betValue);
         } else {
             return -betValue;
@@ -38,9 +34,7 @@ class DiceHigher implements IGame {
     }
 
     maxUserProfit(num: number, betValue: number) {
-        const totalWon = new BN(betValue)
-            .muln(RANGE)
-            .divn(RANGE - num - 1);
+        const totalWon = new BN(betValue).muln(RANGE).divn(RANGE - num - 1);
         return profitFromTotalWon(totalWon, betValue);
     }
 }

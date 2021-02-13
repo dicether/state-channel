@@ -1,7 +1,6 @@
 import BN from "bn.js";
 import * as ethUtil from "ethereumjs-util";
-
-import {HOUSE_EDGE, HOUSE_EDGE_DIVISOR, PROBABILITY_DIVISOR} from "../index";
+import {HOUSE_EDGE, HOUSE_EDGE_DIVISOR, PROBABILITY_DIVISOR} from "../constants";
 
 export function maxBetFromProbability(winProbability: number, bankRoll: number) {
     const houseEdge = new BN(HOUSE_EDGE);
