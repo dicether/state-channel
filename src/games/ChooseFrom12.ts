@@ -13,18 +13,18 @@ function throwOnInvalidNum(num: number) {
 }
 
 class ChooseFrom12 implements IGame {
-    maxBet(num: number, bankRoll: number) {
+    maxBet(num: number, bankRoll: number): number {
         throwOnInvalidNum(num);
         const winProbability = new BN(getNumSetBits(num) * PROBABILITY_DIVISOR).divn(CHOOSE_FROM_12_NUMS).toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
-    resultNumber(serverSeed: string, userSeed: string) {
+    resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
         return randomNumber.modn(CHOOSE_FROM_12_NUMS);
     }
 
-    userProfit(num: number, betValue: number, resultNum: number) {
+    userProfit(num: number, betValue: number, resultNum: number): number {
         throwOnInvalidNum(num);
         const won = (num & (1 << resultNum)) > 0; // tslint:disable-line:no-bitwise
         if (won) {
@@ -35,7 +35,7 @@ class ChooseFrom12 implements IGame {
         }
     }
 
-    maxUserProfit(num: number, betValue: number) {
+    maxUserProfit(num: number, betValue: number): number {
         const totalWon = new BN(betValue).muln(CHOOSE_FROM_12_NUMS).divn(getNumSetBits(num));
         return profitFromTotalWon(totalWon, betValue);
     }

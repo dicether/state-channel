@@ -23,17 +23,14 @@ export const KENO_SELECTABLE_FIELDS = 10;
 export const KENO_FIELDS = 40;
 
 class Keno implements IGame {
-    maxBet(num: number, bankRoll: number) {
+    maxBet(num: number, bankRoll: number): number {
         Keno.throwOnInvalidNum(num);
 
         const fields = getNumSetBits(num);
-        return new BN(KENO_MAX_BET[fields])
-            .mul(new BN(bankRoll))
-            .divn(KENO_DIVIDER)
-            .toNumber();
+        return new BN(KENO_MAX_BET[fields]).mul(new BN(bankRoll)).divn(KENO_DIVIDER).toNumber();
     }
 
-    resultNumber(serverSeed: string, userSeed: string) {
+    resultNumber(serverSeed: string, userSeed: string): number {
         const resultNum = new BN(0);
         const serverSeedBuf = ethUtil.toBuffer(serverSeed);
         const userSeedBuf = ethUtil.toBuffer(userSeed);
@@ -65,7 +62,7 @@ class Keno implements IGame {
         return resultNum.toNumber();
     }
 
-    userProfit(num: number, betValue: number, resultNum: number) {
+    userProfit(num: number, betValue: number, resultNum: number): number {
         Keno.throwOnInvalidNum(num);
         Keno.throwOnInvalidResultNum(resultNum);
 
@@ -75,7 +72,7 @@ class Keno implements IGame {
         return Keno.calcProfit(betValue, selected, hits);
     }
 
-    maxUserProfit(num: number, betValue: number) {
+    maxUserProfit(num: number, betValue: number): number {
         Keno.throwOnInvalidNum(num);
 
         const selected = getNumSetBits(num);

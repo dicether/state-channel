@@ -11,18 +11,18 @@ function throwOnInvalidNum(num: number) {
 }
 
 class DiceHigher implements IGame {
-    maxBet(num: number, bankRoll: number) {
+    maxBet(num: number, bankRoll: number): number {
         throwOnInvalidNum(num);
         const winProbability = new BN((RANGE - num - 1) * PROBABILITY_DIVISOR).divn(RANGE).toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
-    resultNumber(serverSeed: string, userSeed: string, betNum: number) {
+    resultNumber(serverSeed: string, userSeed: string, _betNum: number): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
         return randomNumber.modn(RANGE);
     }
 
-    userProfit(num: number, betValue: number, resultNum: number) {
+    userProfit(num: number, betValue: number, resultNum: number): number {
         throwOnInvalidNum(num);
         const won = resultNum > num;
         if (won) {
@@ -33,7 +33,7 @@ class DiceHigher implements IGame {
         }
     }
 
-    maxUserProfit(num: number, betValue: number) {
+    maxUserProfit(num: number, betValue: number): number {
         const totalWon = new BN(betValue).muln(RANGE).divn(RANGE - num - 1);
         return profitFromTotalWon(totalWon, betValue);
     }

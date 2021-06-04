@@ -11,18 +11,18 @@ function throwOnInvalidNum(num: number) {
 }
 
 class FlipACoin implements IGame {
-    maxBet(num: number, bankRoll: number) {
+    maxBet(num: number, bankRoll: number): number {
         throwOnInvalidNum(num);
         const winProbability = new BN(PROBABILITY_DIVISOR).divn(2).toNumber();
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
-    resultNumber(serverSeed: string, userSeed: string) {
+    resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
         return randomNumber.modn(2);
     }
 
-    userProfit(num: number, betValue: number, resultNumber: number) {
+    userProfit(num: number, betValue: number, resultNumber: number): number {
         throwOnInvalidNum(num);
         const won = resultNumber === num;
         if (won) {
@@ -33,7 +33,7 @@ class FlipACoin implements IGame {
         }
     }
 
-    maxUserProfit(num: number, betValue: number) {
+    maxUserProfit(num: number, betValue: number): number {
         const totalWon = new BN(betValue).muln(2);
         return profitFromTotalWon(totalWon, betValue);
     }

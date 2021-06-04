@@ -6,8 +6,9 @@
   "types": "lib/src/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "tslint --project .",
-    "prettier": "prettier --write ./**/*.ts",
+    "lint": "eslint \"./**/*.ts\"",
+    "prettier": "prettier --write \"./**/*.ts\"",
+    "prettier-check": "prettier --check \"./**/*.ts\"",
     "test": "mocha ./lib/test/**/*.js"
   },
   "husky": {
@@ -18,10 +19,11 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "prettier --write",
-      "tslint --fix",
+      "eslint --fix",
       "git add"
     ]
   },
+  "prettier": "@dicether/prettier-config",
   "author": "Dicether",
   "license": "MIT",
   "repository": {
@@ -37,17 +39,21 @@
     "ethereumjs-util": "^5.2.0"
   },
   "devDependencies": {
+    "@dicether/eslint-config": "^1.0.0",
+    "@dicether/prettier-config": "^1.0.0",
     "@types/bn.js": "^4.11.4",
     "@types/chai": "^4.1.4",
     "@types/ethereumjs-util": "^5.2.0",
     "@types/mocha": "^5.2.3",
+    "@typescript-eslint/eslint-plugin": "^4.24.0",
+    "@typescript-eslint/parser": "^4.24.0",
     "chai": "^4.2.0",
+    "eslint": "^7.27.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "husky": "^1.1.2",
     "lint-staged": "^7.3.0",
     "mocha": "^5.2.0",
-    "prettier": "^1.14.3",
-    "tslint": "^5.10.0",
-    "tslint-config-standard": "^7.0.0",
-    "typescript": "^2.9.2"
+    "prettier": "^2.3.0",
+    "typescript": "^4.3.2"
   }
 }

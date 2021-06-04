@@ -39,10 +39,7 @@ class Plinko implements IGame {
         const rows = Plinko.getRows(num);
         const maxBet = PLINKO_MAX_BET[risk][rows];
 
-        return new BN(bankRoll)
-            .muln(maxBet)
-            .divn(PLINKO_MAX_BET_DIVIDER)
-            .toNumber();
+        return new BN(bankRoll).muln(maxBet).divn(PLINKO_MAX_BET_DIVIDER).toNumber();
     }
 
     public resultNumber(serverSeed: string, userSeed: string, num: number): number {
@@ -88,11 +85,7 @@ class Plinko implements IGame {
     }
 
     private static calculateProfit(betValue: number, payout: number): number {
-        return new BN(betValue)
-            .mul(new BN(payout))
-            .divn(PLINKO_PAYOUT_DIVIDER)
-            .sub(new BN(betValue))
-            .toNumber();
+        return new BN(betValue).mul(new BN(payout)).divn(PLINKO_PAYOUT_DIVIDER).sub(new BN(betValue)).toNumber();
     }
 
     private static getRisk(num: number): number {

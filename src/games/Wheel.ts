@@ -31,34 +31,28 @@ export const WHEEL_PAYOUT: {[key: number]: {[key: number]: number[]}} = {
 export const WHEEL_RESULT_RANGE = 600;
 
 class Wheel implements IGame {
-    maxBet(num: number, bankRoll: number) {
+    maxBet(num: number, bankRoll: number): number {
         Wheel.throwOnInvalidNum(num);
 
         const risk = Wheel.getRisk(num);
         const segments = Wheel.getSegments(num);
         const maxBet = WHEEL_MAX_BET[risk][segments];
 
-        return new BN(bankRoll)
-            .muln(maxBet)
-            .divn(MAX_BET_DIVIDER)
-            .toNumber();
+        return new BN(bankRoll).muln(maxBet).divn(MAX_BET_DIVIDER).toNumber();
     }
 
-    resultNumber(serverSeed: string, userSeed: string) {
+    resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
         return randomNumber.modn(WHEEL_RESULT_RANGE);
     }
 
-    userProfit(num: number, betValue: number, resultNum: number) {
+    userProfit(num: number, betValue: number, resultNum: number): number {
         Wheel.throwOnInvalidNum(num);
         Wheel.throwOnInvalidResultNum(resultNum);
 
         const risk = Wheel.getRisk(num);
         const segments = Wheel.getSegments(num);
-        const result = new BN(resultNum)
-            .muln(segments)
-            .divn(WHEEL_RESULT_RANGE)
-            .toNumber();
+        const result = new BN(resultNum).muln(segments).divn(WHEEL_RESULT_RANGE).toNumber();
 
         return new BN(betValue)
             .mul(new BN(WHEEL_PAYOUT[risk][segments][result]))
@@ -67,7 +61,7 @@ class Wheel implements IGame {
             .toNumber();
     }
 
-    maxUserProfit(num: number, betValue: number) {
+    maxUserProfit(num: number, betValue: number): number {
         Wheel.throwOnInvalidNum(num);
 
         const risk = Wheel.getRisk(num);
@@ -75,11 +69,7 @@ class Wheel implements IGame {
 
         const maxPayout = WHEEL_PAYOUT[risk][segments].reduce((a, b) => Math.max(a, b));
 
-        return new BN(betValue)
-            .mul(new BN(maxPayout))
-            .divn(PAYOUT_DIVIDER)
-            .sub(new BN(betValue))
-            .toNumber();
+        return new BN(betValue).mul(new BN(maxPayout)).divn(PAYOUT_DIVIDER).sub(new BN(betValue)).toNumber();
     }
 
     private static getRisk(num: number) {

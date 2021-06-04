@@ -22,7 +22,16 @@ const types = {
     ],
 };
 
-function createDomain(version: string, chainId: number, contractAddress: string) {
+type Types = typeof types;
+
+type Domain = {
+    name: string;
+    version: string;
+    chainId: number;
+    verifyingContract: string;
+};
+
+function createDomain(version: string, chainId: number, contractAddress: string): Domain {
     return {
         name: "Dicether",
         version,
@@ -31,17 +40,34 @@ function createDomain(version: string, chainId: number, contractAddress: string)
     };
 }
 
-function convertBet(bet: Bet) {
+type ConvertedBet = {
+    roundId: number;
+    gameType: number;
+    number: number;
+    value: string; // in wei
+    balance: string; // in wei
+    serverHash: string;
+    userHash: string;
+    gameId: number;
+};
+
+function convertBet(bet: Bet): ConvertedBet {
     return {
         ...bet,
-        userHash: bet.userHash,
         value: fromGweiToWei(bet.value).toString(),
         balance: fromGweiToWei(bet.balance).toString(),
         number: bet.num,
     };
 }
 
-export function createTypedDataV2(bet: Bet, version: string, chainId: number, contractAddress: string) {
+export type TypedData = {
+    types: Types;
+    primaryType: string;
+    domain: Domain;
+    message: ConvertedBet;
+};
+
+export function createTypedDataV2(bet: Bet, version: string, chainId: number, contractAddress: string): TypedData {
     const domain = createDomain(version, chainId, contractAddress);
     return {
         types,
@@ -51,14 +77,20 @@ export function createTypedDataV2(bet: Bet, version: string, chainId: number, co
     };
 }
 
-export function signBetV2(bet: Bet, version: string, chainId: number, contractAddress: string, privateKey: Buffer) {
+export function signBetV2(
+    bet: Bet,
+    version: string,
+    chainId: number,
+    contractAddress: string,
+    privateKey: Buffer
+): string {
     const data = createTypedDataV2(bet, version, chainId, contractAddress);
     return signTypedData(data, privateKey);
 }
 
-export function hashBetV2(bet: Bet, version: string, chainId: number, contractAddress: string) {
+export function hashBetV2(bet: Bet, version: string, chainId: number, contractAddress: string): Buffer {
     const data = createTypedDataV2(bet, version, chainId, contractAddress);
-    return hashTypedData(data);
+    return hashTypedData(data) as Buffer;
 }
 
 export function recoverBetSignerV2(
@@ -67,7 +99,7 @@ export function recoverBetSignerV2(
     chainId: number,
     contractAddress: string,
     signature: string
-) {
+): string {
     const data = createTypedDataV2(bet, version, chainId, contractAddress);
     return recoverTypedData(data, signature);
 }

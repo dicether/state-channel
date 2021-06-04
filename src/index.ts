@@ -19,7 +19,7 @@ export function createHashChain(seed: string, len = 1000): string[] {
         result.unshift(ethUtil.sha3(result[0]));
     }
 
-    return result.map(val => ethUtil.bufferToHex(val));
+    return result.map((val) => ethUtil.bufferToHex(val));
 }
 
 export function verifySeed(seed: string, seedHashRef: string): boolean {
@@ -30,15 +30,11 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
-export function maxBet(gameType: number, num: number, bankRoll: number, k: number) {
+export function maxBet(gameType: number, num: number, bankRoll: number, k: number): number {
     const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
 
     // round down to 0.001 Ether
-    return new BN(maxBetValue)
-        .divn(k)
-        .divn(1e6)
-        .muln(1e6)
-        .toNumber();
+    return new BN(maxBetValue).divn(k).divn(1e6).muln(1e6).toNumber();
 }
 
 export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string, num: number): number {
@@ -67,7 +63,7 @@ export function calcNewBalance(
     return profit + oldBalance;
 }
 
-export function createTypedData(bet: Bet, chainId: number, contractAddress: string, version = 2) {
+export function createTypedData(bet: Bet, chainId: number, contractAddress: string, version = 2): TypedData {
     switch (version) {
         case 2:
             return createTypedDataV2(bet, "2", chainId, contractAddress);
@@ -76,7 +72,7 @@ export function createTypedData(bet: Bet, chainId: number, contractAddress: stri
     }
 }
 
-export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2) {
+export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2): Buffer {
     switch (version) {
         case 2:
             return hashBetV2(bet, "2", chainId, contractAddress);
@@ -85,7 +81,7 @@ export function hashBet(bet: Bet, chainId: number, contractAddress: string, vers
     }
 }
 
-export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: Buffer, version = 2) {
+export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: Buffer, version = 2): string {
     switch (version) {
         case 2:
             return signBetV2(bet, "2", chainId, contractAddress, privateKey);
@@ -94,7 +90,13 @@ export function signBet(bet: Bet, chainId: number, contractAddress: string, priv
     }
 }
 
-export function recoverBetSigner(bet: Bet, chainId: number, contractAddress: string, signature: string, version = 2) {
+export function recoverBetSigner(
+    bet: Bet,
+    chainId: number,
+    contractAddress: string,
+    signature: string,
+    version = 2
+): string {
     switch (version) {
         case 2:
             return recoverBetSignerV2(bet, "2", chainId, contractAddress, signature);
@@ -110,7 +112,7 @@ export function verifySignature(
     signature: string,
     address: string,
     version = 2
-) {
+): boolean {
     return recoverBetSigner(bet, chainId, contractAddress, signature, version) === address;
 }
 
