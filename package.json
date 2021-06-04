@@ -33,7 +33,6 @@
   "dependencies": {
     "@dicether/eip712": "^2.0.0",
     "@types/ethereumjs-util": "^5.2.0",
-    "bignumber.js": "^5.0.0",
     "bn.js": "^4.11.8",
     "ethereumjs-abi": "^0.6.5",
     "ethereumjs-util": "^5.2.0"
