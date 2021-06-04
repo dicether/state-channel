@@ -35,7 +35,7 @@ class Keno implements IGame {
         const serverSeedBuf = ethUtil.toBuffer(serverSeed);
         const userSeedBuf = ethUtil.toBuffer(userSeed);
 
-        let seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, userSeedBuf])) as Buffer;
+        let seed = ethUtil.keccak(Buffer.concat([serverSeedBuf, userSeedBuf]));
 
         for (let i = 0; i < KENO_SELECTABLE_FIELDS; i++) {
             const hexSeed = seed.toString("hex");
@@ -56,7 +56,7 @@ class Keno implements IGame {
             resultNum.ior(new BN(1).shln(resultPos));
 
             // update seed
-            seed = ethUtil.sha3(seed) as Buffer;
+            seed = ethUtil.keccak(seed);
         }
 
         return resultNum.toNumber();

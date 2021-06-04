@@ -28,6 +28,5 @@ export function fromGweiToWei(value: number): string {
 }
 
 export function keccak(data: string): string {
-    ethUtil.toBuffer(data);
-    return ethUtil.bufferToHex(ethUtil.sha3(data));
+    return ethUtil.bufferToHex(ethUtil.keccakFromHexString(data));
 }

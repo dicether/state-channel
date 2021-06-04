@@ -23,7 +23,7 @@ export function generateRandomNumber(serverSeed: string, userSeed: string): BN {
     const serverSeedBuf = ethUtil.toBuffer(serverSeed);
     const userSeedBuf = ethUtil.toBuffer(userSeed);
 
-    const seed = ethUtil.sha3(Buffer.concat([serverSeedBuf, userSeedBuf])) as Buffer;
+    const seed = ethUtil.keccak(Buffer.concat([serverSeedBuf, userSeedBuf]));
     const hexSeed = seed.toString("hex");
     return new BN(hexSeed, 16);
 }

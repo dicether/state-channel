@@ -16,7 +16,7 @@ export * from "./utilities";
 export function createHashChain(seed: string, len = 1000): string[] {
     const result = [ethUtil.toBuffer(seed)];
     for (let i = 0; i < len; i++) {
-        result.unshift(ethUtil.sha3(result[0]));
+        result.unshift(ethUtil.keccak(result[0]));
     }
 
     return result.map((val) => ethUtil.bufferToHex(val));
@@ -26,7 +26,7 @@ export function verifySeed(seed: string, seedHashRef: string): boolean {
     const seedBuf = ethUtil.toBuffer(seed);
     const seedHashRefBuf = ethUtil.toBuffer(seedHashRef) as Buffer;
 
-    const seedHashBuf = ethUtil.sha3(seedBuf);
+    const seedHashBuf = ethUtil.keccak(seedBuf);
     return seedHashRefBuf.equals(seedHashBuf);
 }
 
