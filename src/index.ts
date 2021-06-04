@@ -3,8 +3,7 @@ import * as ethAbi from "ethereumjs-abi";
 import * as ethUtil from "ethereumjs-util";
 
 import {getGameImplementation} from "./games";
-import {createTypedDataV1, hashBetV1, recoverBetSignerV1, signBetV1} from "./signingV1";
-import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2} from "./signingV2";
+import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2, TypedData} from "./signingV2";
 import {Bet} from "./types";
 
 export {Bet};
@@ -70,8 +69,6 @@ export function calcNewBalance(
 
 export function createTypedData(bet: Bet, chainId: number, contractAddress: string, version = 2) {
     switch (version) {
-        case 1:
-            return createTypedDataV1(bet, contractAddress);
         case 2:
             return createTypedDataV2(bet, "2", chainId, contractAddress);
         default:
@@ -81,8 +78,6 @@ export function createTypedData(bet: Bet, chainId: number, contractAddress: stri
 
 export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2) {
     switch (version) {
-        case 1:
-            return hashBetV1(bet, contractAddress);
         case 2:
             return hashBetV2(bet, "2", chainId, contractAddress);
         default:
@@ -92,8 +87,6 @@ export function hashBet(bet: Bet, chainId: number, contractAddress: string, vers
 
 export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: Buffer, version = 2) {
     switch (version) {
-        case 1:
-            return signBetV1(bet, contractAddress, privateKey);
         case 2:
             return signBetV2(bet, "2", chainId, contractAddress, privateKey);
         default:
@@ -103,8 +96,6 @@ export function signBet(bet: Bet, chainId: number, contractAddress: string, priv
 
 export function recoverBetSigner(bet: Bet, chainId: number, contractAddress: string, signature: string, version = 2) {
     switch (version) {
-        case 1:
-            return recoverBetSignerV1(bet, contractAddress, signature);
         case 2:
             return recoverBetSignerV2(bet, "2", chainId, contractAddress, signature);
         default:
