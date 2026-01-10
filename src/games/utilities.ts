@@ -1,6 +1,9 @@
+import {stripHexPrefix} from "@ethereumjs/util";
 import BN from "bn.js";
-import * as ethUtil from "ethereumjs-util";
+
 import {HOUSE_EDGE, HOUSE_EDGE_DIVISOR, PROBABILITY_DIVISOR} from "../constants";
+import {Hex} from "../types";
+import {concatHexStrings, keccak} from "../utilities";
 
 export function maxBetFromProbability(winProbability: number, bankRoll: number): number {
     const houseEdge = new BN(HOUSE_EDGE);
@@ -20,12 +23,8 @@ export function maxBetFromProbability(winProbability: number, bankRoll: number):
 }
 
 export function generateRandomNumber(serverSeed: string, userSeed: string): BN {
-    const serverSeedBuf = ethUtil.toBuffer(serverSeed);
-    const userSeedBuf = ethUtil.toBuffer(userSeed);
-
-    const seed = ethUtil.keccak(Buffer.concat([serverSeedBuf, userSeedBuf]));
-    const hexSeed = seed.toString("hex");
-    return new BN(hexSeed, 16);
+    const seed = keccak(concatHexStrings(serverSeed as Hex, userSeed as Hex));
+    return new BN(stripHexPrefix(seed), 16);
 }
 
 export function profitFromTotalWon(totalWon: BN, betValue: number): number {

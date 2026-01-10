@@ -1,8 +1,9 @@
+import {stripHexPrefix} from "@ethereumjs/util";
 import BN from "bn.js";
-import * as ethUtil from "ethereumjs-util";
 
-import {getNumSetBits} from "../utilities";
+import {concatHexStrings, getNumSetBits, keccak} from "../utilities";
 import {IGame} from "./IGame";
+import {Hex} from "../types";
 
 export const KENO_DIVIDER = 1000;
 export const KENO_MAX_BET = [0, 5, 10, 7, 5, 4, 4, 2, 2, 2, 1];
@@ -32,14 +33,11 @@ class Keno implements IGame {
 
     resultNumber(serverSeed: string, userSeed: string): number {
         const resultNum = new BN(0);
-        const serverSeedBuf = ethUtil.toBuffer(serverSeed);
-        const userSeedBuf = ethUtil.toBuffer(userSeed);
 
-        let seed = ethUtil.keccak(Buffer.concat([serverSeedBuf, userSeedBuf]));
+        let hexSeed = keccak(concatHexStrings(serverSeed as Hex, userSeed as Hex));
 
         for (let i = 0; i < KENO_SELECTABLE_FIELDS; i++) {
-            const hexSeed = seed.toString("hex");
-            const randNum = new BN(hexSeed, 16).modn(KENO_FIELDS - i);
+            const randNum = new BN(stripHexPrefix(hexSeed), 16).modn(KENO_FIELDS - i);
 
             let resultPos = 0;
             let pos = 0;
@@ -56,7 +54,7 @@ class Keno implements IGame {
             resultNum.ior(new BN(1).shln(resultPos));
 
             // update seed
-            seed = ethUtil.keccak(seed);
+            hexSeed = keccak(hexSeed);
         }
 
         return resultNum.toNumber();

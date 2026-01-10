@@ -1,4 +1,7 @@
-export type Bet = {
+export type Address = `0x${string}`;
+export type Hex = `0x${string}`;
+
+export interface Bet {
     roundId: number;
     gameType: number;
     num: number;
@@ -7,4 +10,4 @@ export type Bet = {
     serverHash: string;
     userHash: string;
     gameId: number;
-};
+}

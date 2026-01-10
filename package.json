@@ -26,25 +26,27 @@
     "url": "https://github.com/dicether/state-channel"
   },
   "dependencies": {
-    "@dicether/eip712": "^2.0.0",
-    "bn.js": "^5.2.0",
-    "ethereumjs-abi": "^0.6.8",
-    "ethereumjs-util": "^7.0.10"
+    "@ethereumjs/util": "^10.1.0",
+    "@metamask/eth-sig-util": "^8.2.0",
+    "bn.js": "^5.2.2",
+    "ethereum-cryptography": "^3.2.0",
+    "viem": "^2.43.5"
   },
   "devDependencies": {
-    "@dicether/eslint-config": "^1.0.0",
+    "@dicether/eslint-config": "^2.2.0",
     "@dicether/prettier-config": "^1.0.0",
-    "@types/chai": "^4.2.18",
-    "@types/mocha": "^8.2.2",
-    "@typescript-eslint/eslint-plugin": "^4.26.0",
-    "@typescript-eslint/parser": "^4.26.0",
-    "chai": "^4.3.4",
-    "eslint": "^7.27.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "husky": "^6.0.0",
-    "lint-staged": "^11.0.0",
-    "mocha": "^8.4.0",
-    "prettier": "^2.3.0",
-    "typescript": "^4.3.2"
+    "@types/bn.js": "^5.2.0",
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "^10.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.52.0",
+    "@typescript-eslint/parser": "^8.52.0",
+    "chai": "^6.2.2",
+    "eslint": "^9.39.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "mocha": "^11.7.5",
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
   }
 }

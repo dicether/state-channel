@@ -1,7 +1,7 @@
-import {hashTypedData, recoverTypedData, signTypedData} from "@dicether/eip712";
+import {hashTypedData} from "viem";
 
-import {Bet} from "./types";
-import {fromGweiToWei} from "./utilities";
+import {Address, Bet, Hex} from "./types";
+import {ecSign, fromGweiToWei, recoverAddress} from "./utilities";
 
 const types = {
     EIP712Domain: [
@@ -20,52 +20,53 @@ const types = {
         {name: "userHash", type: "bytes32"},
         {name: "gameId", type: "uint256"},
     ],
-};
+} as const;
 
 type Types = typeof types;
 
-type Domain = {
+interface Domain {
     name: string;
     version: string;
-    chainId: number;
-    verifyingContract: string;
-};
+    chainId: bigint;
+    verifyingContract: Address;
+}
 
 function createDomain(version: string, chainId: number, contractAddress: string): Domain {
     return {
         name: "Dicether",
         version,
-        chainId,
-        verifyingContract: contractAddress,
+        chainId: BigInt(chainId),
+        verifyingContract: contractAddress as Address,
     };
 }
 
-type ConvertedBet = {
+interface ConvertedBet {
     roundId: number;
     gameType: number;
-    number: number;
-    value: string; // in wei
-    balance: string; // in wei
-    serverHash: string;
-    userHash: string;
-    gameId: number;
-};
+    number: bigint;
+    value: bigint; // in wei
+    balance: bigint; // in wei
+    serverHash: Hex;
+    userHash: Hex;
+    gameId: bigint;
+}
 
 function convertBet(bet: Bet): ConvertedBet {
     return {
         ...bet,
-        value: fromGweiToWei(bet.value).toString(),
-        balance: fromGweiToWei(bet.balance).toString(),
-        number: bet.num,
-    };
+        gameId: BigInt(bet.gameId),
+        value: BigInt(fromGweiToWei(bet.value).toString()),
+        balance: BigInt(fromGweiToWei(bet.balance).toString()),
+        number: BigInt(bet.num),
+    } as ConvertedBet;
 }
 
-export type TypedData = {
+export interface TypedData {
     types: Types;
-    primaryType: string;
+    primaryType: "Bet";
     domain: Domain;
     message: ConvertedBet;
-};
+}
 
 export function createTypedDataV2(bet: Bet, version: string, chainId: number, contractAddress: string): TypedData {
     const domain = createDomain(version, chainId, contractAddress);
@@ -82,15 +83,16 @@ export function signBetV2(
     version: string,
     chainId: number,
     contractAddress: string,
-    privateKey: Buffer
+    privateKey: string,
 ): string {
-    const data = createTypedDataV2(bet, version, chainId, contractAddress);
-    return signTypedData(data, privateKey);
+    const hash = hashBetV2(bet, version, chainId, contractAddress);
+    return ecSign(hash, privateKey as Hex);
 }
 
-export function hashBetV2(bet: Bet, version: string, chainId: number, contractAddress: string): Buffer {
+export function hashBetV2(bet: Bet, version: string, chainId: number, contractAddress: string): Hex {
     const data = createTypedDataV2(bet, version, chainId, contractAddress);
-    return hashTypedData(data) as Buffer;
+    const hash = hashTypedData(data);
+    return hash;
 }
 
 export function recoverBetSignerV2(
@@ -98,8 +100,8 @@ export function recoverBetSignerV2(
     version: string,
     chainId: number,
     contractAddress: string,
-    signature: string
+    signature: string,
 ): string {
-    const data = createTypedDataV2(bet, version, chainId, contractAddress);
-    return recoverTypedData(data, signature);
+    const hash = hashBetV2(bet, version, chainId, contractAddress);
+    return recoverAddress(hash, signature as Hex);
 }

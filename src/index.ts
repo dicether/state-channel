@@ -1,10 +1,10 @@
 import BN from "bn.js";
-import * as ethAbi from "ethereumjs-abi";
-import * as ethUtil from "ethereumjs-util";
+import {encodePacked, keccak256} from "viem";
 
 import {getGameImplementation} from "./games";
 import {createTypedDataV2, hashBetV2, recoverBetSignerV2, signBetV2, TypedData} from "./signingV2";
-import {Bet} from "./types";
+import {Bet, Hex} from "./types";
+import {ecSign} from "./utilities";
 
 export {Bet};
 export * from "./games/Keno";
@@ -14,20 +14,17 @@ export * from "./constants";
 export * from "./utilities";
 
 export function createHashChain(seed: string, len = 1000): string[] {
-    const result = [ethUtil.toBuffer(seed)];
+    const result = [seed as Hex];
     for (let i = 0; i < len; i++) {
-        result.unshift(ethUtil.keccak(result[0]));
+        result.unshift(keccak256(result[0]));
     }
 
-    return result.map((val) => ethUtil.bufferToHex(val));
+    return result;
 }
 
 export function verifySeed(seed: string, seedHashRef: string): boolean {
-    const seedBuf = ethUtil.toBuffer(seed);
-    const seedHashRefBuf = ethUtil.toBuffer(seedHashRef) as Buffer;
-
-    const seedHashBuf = ethUtil.keccak(seedBuf);
-    return seedHashRefBuf.equals(seedHashBuf);
+    const seedHash = keccak256(seed as Hex);
+    return seedHash === seedHashRef;
 }
 
 export function maxBet(gameType: number, num: number, bankRoll: number, k: number): number {
@@ -55,7 +52,7 @@ export function calcNewBalance(
     betValue: number,
     serverSeed: string,
     userSeed: string,
-    oldBalance: number
+    oldBalance: number,
 ): number {
     const resultNum = calcResultNumber(gameType, serverSeed, userSeed, num);
     const profit = calcUserProfit(gameType, num, betValue, resultNum);
@@ -72,7 +69,7 @@ export function createTypedData(bet: Bet, chainId: number, contractAddress: stri
     }
 }
 
-export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2): Buffer {
+export function hashBet(bet: Bet, chainId: number, contractAddress: string, version = 2): string {
     switch (version) {
         case 2:
             return hashBetV2(bet, "2", chainId, contractAddress);
@@ -81,7 +78,7 @@ export function hashBet(bet: Bet, chainId: number, contractAddress: string, vers
     }
 }
 
-export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: Buffer, version = 2): string {
+export function signBet(bet: Bet, chainId: number, contractAddress: string, privateKey: string, version = 2): string {
     switch (version) {
         case 2:
             return signBetV2(bet, "2", chainId, contractAddress, privateKey);
@@ -95,7 +92,7 @@ export function recoverBetSigner(
     chainId: number,
     contractAddress: string,
     signature: string,
-    version = 2
+    version = 2,
 ): string {
     switch (version) {
         case 2:
@@ -111,7 +108,7 @@ export function verifySignature(
     contractAddress: string,
     signature: string,
     address: string,
-    version = 2
+    version = 2,
 ): boolean {
     return recoverBetSigner(bet, chainId, contractAddress, signature, version) === address;
 }
@@ -123,13 +120,13 @@ export function signStartData(
     createBefore: number,
     serverEndHash: string,
     serverAccount: string,
-    privateKey: Buffer
-): string {
-    const hash = ethAbi.soliditySHA3(
+    privateKey: Buffer,
+): Hex {
+    const packed = encodePacked(
         ["address", "address", "uint256", "uint256", "bytes32"],
-        [contractAddress, user, lastGameId, createBefore, ethUtil.toBuffer(serverEndHash)]
+        [contractAddress as Hex, user as Hex, BigInt(lastGameId), BigInt(createBefore), serverEndHash as Hex],
     );
-
-    const sig = ethUtil.ecsign(hash, privateKey);
-    return ethUtil.toRpcSig(sig.v, sig.r, sig.s);
+    const hash = keccak256(packed);
+    const privateKeyHexStr = `0x${privateKey.toString("hex")}` as const;
+    return ecSign(hash, privateKeyHexStr);
 }
