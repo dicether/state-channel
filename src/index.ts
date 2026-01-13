@@ -120,13 +120,12 @@ export function signStartData(
     createBefore: number,
     serverEndHash: string,
     serverAccount: string,
-    privateKey: Buffer,
+    privateKey: Hex,
 ): Hex {
     const packed = encodePacked(
         ["address", "address", "uint256", "uint256", "bytes32"],
         [contractAddress as Hex, user as Hex, BigInt(lastGameId), BigInt(createBefore), serverEndHash as Hex],
     );
     const hash = keccak256(packed);
-    const privateKeyHexStr = `0x${privateKey.toString("hex")}` as const;
-    return ecSign(hash, privateKeyHexStr);
+    return ecSign(hash, privateKey);
 }
