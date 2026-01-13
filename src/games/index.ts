@@ -7,7 +7,7 @@ import Keno from "./Keno";
 import Plinko from "./Plinko";
 import Wheel from "./Wheel";
 
-const games: {[gameType: number]: IGame} = {
+const games: Record<number, IGame> = {
     1: new DiceLower(),
     2: new DiceHigher(),
     3: new ChooseFrom12(),

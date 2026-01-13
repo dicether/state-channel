@@ -5,7 +5,7 @@ import {generateRandomNumber} from "./utilities";
 
 export const MAX_BET_DIVIDER = 10000;
 
-export const WHEEL_MAX_BET: {[key: number]: {[key: number]: number}} = {
+export const WHEEL_MAX_BET: Record<number, Record<number, number>> = {
     1: {10: 632, 20: 386},
     2: {10: 134, 20: 134},
     3: {10: 17, 20: 8},
@@ -13,7 +13,7 @@ export const WHEEL_MAX_BET: {[key: number]: {[key: number]: number}} = {
 
 export const PAYOUT_DIVIDER = 100;
 
-export const WHEEL_PAYOUT: {[key: number]: {[key: number]: number[]}} = {
+export const WHEEL_PAYOUT: Record<number, Record<number, number[]>> = {
     1: {
         10: [0, 120, 120, 0, 120, 120, 145, 120, 120, 120],
         20: [0, 120, 120, 0, 120, 120, 145, 120, 0, 120, 240, 120, 0, 120, 120, 145, 120, 0, 120, 120],

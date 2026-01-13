@@ -5,7 +5,7 @@ import {generateRandomNumber} from "./utilities";
 
 export const PLINKO_MAX_BET_DIVIDER = 10000;
 
-export const PLINKO_MAX_BET: {[key: number]: {[key: number]: number}} = {
+export const PLINKO_MAX_BET: Record<number, Record<number, number>> = {
     1: {8: 264, 12: 607, 16: 758},
     2: {8: 55, 12: 175, 16: 208},
     3: {8: 24, 12: 77, 16: 68},
@@ -13,7 +13,7 @@ export const PLINKO_MAX_BET: {[key: number]: {[key: number]: number}} = {
 
 export const PLINKO_PAYOUT_DIVIDER = 10;
 
-export const PLINKO_PAYOUT: {[key: number]: {[key: number]: number[]}} = {
+export const PLINKO_PAYOUT: Record<number, Record<number, number[]>> = {
     1: {
         8: [4, 9, 14, 19, 73],
         12: [4, 10, 11, 15, 18, 31, 100],
@@ -47,7 +47,6 @@ class Plinko implements IGame {
 
         const rows = Plinko.getRows(num);
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        // tslint:disable-next-line:no-bitwise
         return randomNumber.and(new BN((1 << rows) - 1)).toNumber();
     }
 
@@ -60,7 +59,6 @@ class Plinko implements IGame {
 
         let numBitsSet = 0;
         for (let i = 0; i < rows; i++) {
-            // tslint:disable-next-line:no-bitwise
             if ((resultNum & (1 << i)) > 0) {
                 numBitsSet++;
             }
@@ -107,7 +105,6 @@ class Plinko implements IGame {
 
     private static throwOnInvalidResultNum(num: number, resultNum: number) {
         const rows = this.getRows(num);
-        // tslint:disable-next-line:no-bitwise
         if (resultNum < 0 || resultNum >= 1 << rows) {
             throw new Error(`Invalid result number ${resultNum}`);
         }
