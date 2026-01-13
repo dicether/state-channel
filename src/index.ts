@@ -119,7 +119,6 @@ export function signStartData(
     lastGameId: number,
     createBefore: number,
     serverEndHash: string,
-    serverAccount: string,
     privateKey: Hex,
 ): Hex {
     const packed = encodePacked(
