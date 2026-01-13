@@ -1,5 +1,3 @@
-import BN from "bn.js";
-
 import {IGame} from "./IGame";
 import {generateRandomNumber} from "./utilities";
 
@@ -39,7 +37,7 @@ class Plinko implements IGame {
         const rows = Plinko.getRows(num);
         const maxBet = PLINKO_MAX_BET[risk][rows];
 
-        return new BN(bankRoll).muln(maxBet).divn(PLINKO_MAX_BET_DIVIDER).toNumber();
+        return Number((BigInt(bankRoll) * BigInt(maxBet)) / BigInt(PLINKO_MAX_BET_DIVIDER));
     }
 
     public resultNumber(serverSeed: string, userSeed: string, num: number): number {
@@ -47,7 +45,7 @@ class Plinko implements IGame {
 
         const rows = Plinko.getRows(num);
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        return randomNumber.and(new BN((1 << rows) - 1)).toNumber();
+        return Number(randomNumber & ((1n << BigInt(rows)) - 1n));
     }
 
     public userProfit(num: number, betValue: number, resultNum: number): number {
@@ -83,7 +81,7 @@ class Plinko implements IGame {
     }
 
     private static calculateProfit(betValue: number, payout: number): number {
-        return new BN(betValue).mul(new BN(payout)).divn(PLINKO_PAYOUT_DIVIDER).sub(new BN(betValue)).toNumber();
+        return Number((BigInt(betValue) * BigInt(payout)) / BigInt(PLINKO_PAYOUT_DIVIDER) - BigInt(betValue));
     }
 
     private static getRisk(num: number): number {

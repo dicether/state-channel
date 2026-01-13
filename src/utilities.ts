@@ -1,5 +1,4 @@
 import {bytesToHex, ecrecover, fromRPCSig, hexToBytes, stripHexPrefix, toBytes, toRPCSig} from "@ethereumjs/util";
-import BN from "bn.js";
 import {secp256k1} from "ethereum-cryptography/secp256k1";
 import {keccak256} from "viem";
 import {publicKeyToAddress} from "viem/accounts";
@@ -10,7 +9,7 @@ export function getSetBits(num: number): boolean[] {
     const result: boolean[] = [];
 
     for (let i = 0; i < 52; i++) {
-        if (new BN(1).shln(i).and(new BN(num)).toNumber()) {
+        if ((1n << BigInt(i)) & BigInt(num)) {
             result.push(true);
         } else {
             result.push(false);
@@ -25,11 +24,11 @@ export function getNumSetBits(num: number): number {
 }
 
 export function fromWeiToGwei(value: string): number {
-    return new BN(value).div(new BN(1e9)).toNumber();
+    return Number(BigInt(value) / BigInt(1e9));
 }
 
 export function fromGweiToWei(value: number): string {
-    return new BN(value).mul(new BN(1e9)).toString();
+    return (BigInt(value) * BigInt(1e9)).toString();
 }
 
 export function keccak(data: string): Hex {

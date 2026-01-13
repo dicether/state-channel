@@ -28,14 +28,12 @@
   "dependencies": {
     "@ethereumjs/util": "^10.1.0",
     "@metamask/eth-sig-util": "^8.2.0",
-    "bn.js": "^5.2.2",
     "ethereum-cryptography": "^3.2.0",
     "viem": "^2.43.5"
   },
   "devDependencies": {
     "@dicether/eslint-config": "^2.2.0",
     "@dicether/prettier-config": "^1.0.0",
-    "@types/bn.js": "^5.2.0",
     "@types/chai": "^5.2.3",
     "@types/mocha": "^10.0.10",
     "@typescript-eslint/eslint-plugin": "^8.52.0",

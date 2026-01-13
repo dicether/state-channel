@@ -1,5 +1,3 @@
-import BN from "bn.js";
-
 import {PROBABILITY_DIVISOR} from "../constants";
 import {IGame} from "./IGame";
 import {generateRandomNumber, maxBetFromProbability, profitFromTotalWon} from "./utilities";
@@ -13,20 +11,20 @@ function throwOnInvalidNum(num: number) {
 class FlipACoin implements IGame {
     maxBet(num: number, bankRoll: number): number {
         throwOnInvalidNum(num);
-        const winProbability = new BN(PROBABILITY_DIVISOR).divn(2).toNumber();
+        const winProbability = Number(BigInt(PROBABILITY_DIVISOR) / 2n);
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
     resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        return randomNumber.modn(2);
+        return Number(randomNumber % 2n);
     }
 
     userProfit(num: number, betValue: number, resultNumber: number): number {
         throwOnInvalidNum(num);
         const won = resultNumber === num;
         if (won) {
-            const totalWon = new BN(betValue).muln(2);
+            const totalWon = BigInt(betValue) * 2n;
             return profitFromTotalWon(totalWon, betValue);
         } else {
             return -betValue;
@@ -35,7 +33,7 @@ class FlipACoin implements IGame {
 
     maxUserProfit(num: number, betValue: number): number {
         throwOnInvalidNum(num);
-        const totalWon = new BN(betValue).muln(2);
+        const totalWon = BigInt(betValue) * 2n;
         return profitFromTotalWon(totalWon, betValue);
     }
 }

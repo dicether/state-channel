@@ -1,5 +1,3 @@
-import BN from "bn.js";
-
 import {IGame} from "./IGame";
 import {generateRandomNumber} from "./utilities";
 
@@ -38,12 +36,12 @@ class Wheel implements IGame {
         const segments = Wheel.getSegments(num);
         const maxBet = WHEEL_MAX_BET[risk][segments];
 
-        return new BN(bankRoll).muln(maxBet).divn(MAX_BET_DIVIDER).toNumber();
+        return Number((BigInt(bankRoll) * BigInt(maxBet)) / BigInt(MAX_BET_DIVIDER));
     }
 
     resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        return randomNumber.modn(WHEEL_RESULT_RANGE);
+        return Number(randomNumber % BigInt(WHEEL_RESULT_RANGE));
     }
 
     userProfit(num: number, betValue: number, resultNum: number): number {
@@ -52,13 +50,12 @@ class Wheel implements IGame {
 
         const risk = Wheel.getRisk(num);
         const segments = Wheel.getSegments(num);
-        const result = new BN(resultNum).muln(segments).divn(WHEEL_RESULT_RANGE).toNumber();
+        const result = Number((BigInt(resultNum) * BigInt(segments)) / BigInt(WHEEL_RESULT_RANGE));
 
-        return new BN(betValue)
-            .mul(new BN(WHEEL_PAYOUT[risk][segments][result]))
-            .divn(PAYOUT_DIVIDER)
-            .sub(new BN(betValue))
-            .toNumber();
+        return Number(
+            (BigInt(betValue) * BigInt(WHEEL_PAYOUT[risk][segments][result])) / BigInt(PAYOUT_DIVIDER) -
+                BigInt(betValue),
+        );
     }
 
     maxUserProfit(num: number, betValue: number): number {
@@ -69,7 +66,7 @@ class Wheel implements IGame {
 
         const maxPayout = WHEEL_PAYOUT[risk][segments].reduce((a, b) => Math.max(a, b));
 
-        return new BN(betValue).mul(new BN(maxPayout)).divn(PAYOUT_DIVIDER).sub(new BN(betValue)).toNumber();
+        return Number((BigInt(betValue) * BigInt(maxPayout)) / BigInt(PAYOUT_DIVIDER) - BigInt(betValue));
     }
 
     private static getRisk(num: number) {

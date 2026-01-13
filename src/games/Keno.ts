@@ -1,6 +1,3 @@
-import {stripHexPrefix} from "@ethereumjs/util";
-import BN from "bn.js";
-
 import {concatHexStrings, getNumSetBits, keccak} from "../utilities";
 import {IGame} from "./IGame";
 import {Hex} from "../types";
@@ -28,43 +25,43 @@ class Keno implements IGame {
         Keno.throwOnInvalidNum(num);
 
         const fields = getNumSetBits(num);
-        return new BN(KENO_MAX_BET[fields]).mul(new BN(bankRoll)).divn(KENO_DIVIDER).toNumber();
+        return Number((BigInt(KENO_MAX_BET[fields]) * BigInt(bankRoll)) / BigInt(KENO_DIVIDER));
     }
 
     resultNumber(serverSeed: string, userSeed: string): number {
-        const resultNum = new BN(0);
+        let resultNum = 0n;
 
         let hexSeed = keccak(concatHexStrings(serverSeed as Hex, userSeed as Hex));
 
         for (let i = 0; i < KENO_SELECTABLE_FIELDS; i++) {
-            const randNum = new BN(stripHexPrefix(hexSeed), 16).modn(KENO_FIELDS - i);
+            const randNum = Number(BigInt(hexSeed) % BigInt(KENO_FIELDS - i));
 
-            let resultPos = 0;
+            let resultPos = 0n;
             let pos = 0;
             for (;;) {
-                if (resultNum.and(new BN(1).shln(resultPos)).toNumber() === 0) {
+                if ((resultNum & (1n << resultPos)) === 0n) {
                     if (pos === randNum) {
                         break;
                     }
                     pos += 1;
                 }
-                resultPos += 1;
+                resultPos += 1n;
             }
 
-            resultNum.ior(new BN(1).shln(resultPos));
+            resultNum |= 1n << resultPos;
 
             // update seed
             hexSeed = keccak(hexSeed);
         }
 
-        return resultNum.toNumber();
+        return Number(resultNum);
     }
 
     userProfit(num: number, betValue: number, resultNum: number): number {
         Keno.throwOnInvalidNum(num);
         Keno.throwOnInvalidResultNum(resultNum);
 
-        const hits = getNumSetBits(new BN(num).and(new BN(resultNum)).toNumber());
+        const hits = getNumSetBits(num & resultNum);
         const selected = getNumSetBits(num);
 
         return Keno.calcProfit(betValue, selected, hits);
@@ -79,8 +76,8 @@ class Keno implements IGame {
 
     private static calcProfit(betValue: number, selected: number, hits: number) {
         const payOutMultiplier = KENO_PAY_OUT[selected][hits];
-        const payout = new BN(betValue).muln(payOutMultiplier).divn(KENO_DIVIDER);
-        return payout.sub(new BN(betValue)).toNumber();
+        const payout = (BigInt(betValue) * BigInt(payOutMultiplier)) / BigInt(KENO_DIVIDER);
+        return Number(payout - BigInt(betValue));
     }
 
     private static throwOnInvalidNum(num: number) {

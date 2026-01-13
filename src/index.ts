@@ -1,4 +1,3 @@
-import BN from "bn.js";
 import {encodePacked, keccak256} from "viem";
 
 import {getGameImplementation} from "./games";
@@ -31,7 +30,7 @@ export function maxBet(gameType: number, num: number, bankRoll: number, k: numbe
     const maxBetValue = getGameImplementation(gameType).maxBet(num, bankRoll);
 
     // round down to 0.001 Ether
-    return new BN(maxBetValue).divn(k).divn(1e6).muln(1e6).toNumber();
+    return Number((BigInt(maxBetValue) / BigInt(k) / BigInt(1e6)) * BigInt(1e6));
 }
 
 export function calcResultNumber(gameType: number, serverSeed: string, userSeed: string, num: number): number {

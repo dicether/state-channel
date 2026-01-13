@@ -1,5 +1,3 @@
-import BN from "bn.js";
-
 import {CHOOSE_FROM_12_NUMS, PROBABILITY_DIVISOR} from "../constants";
 import {getNumSetBits} from "../utilities";
 import {IGame} from "./IGame";
@@ -14,20 +12,22 @@ function throwOnInvalidNum(num: number) {
 class ChooseFrom12 implements IGame {
     maxBet(num: number, bankRoll: number): number {
         throwOnInvalidNum(num);
-        const winProbability = new BN(getNumSetBits(num) * PROBABILITY_DIVISOR).divn(CHOOSE_FROM_12_NUMS).toNumber();
+        const winProbability = Number(
+            (BigInt(getNumSetBits(num)) * BigInt(PROBABILITY_DIVISOR)) / BigInt(CHOOSE_FROM_12_NUMS),
+        );
         return maxBetFromProbability(winProbability, bankRoll);
     }
 
     resultNumber(serverSeed: string, userSeed: string): number {
         const randomNumber = generateRandomNumber(serverSeed, userSeed);
-        return randomNumber.modn(CHOOSE_FROM_12_NUMS);
+        return Number(randomNumber % BigInt(CHOOSE_FROM_12_NUMS));
     }
 
     userProfit(num: number, betValue: number, resultNum: number): number {
         throwOnInvalidNum(num);
         const won = (num & (1 << resultNum)) > 0;
         if (won) {
-            const totalWon = new BN(betValue).muln(CHOOSE_FROM_12_NUMS).divn(getNumSetBits(num));
+            const totalWon = (BigInt(betValue) * BigInt(CHOOSE_FROM_12_NUMS)) / BigInt(getNumSetBits(num));
             return profitFromTotalWon(totalWon, betValue);
         } else {
             return -betValue;
@@ -36,7 +36,7 @@ class ChooseFrom12 implements IGame {
 
     maxUserProfit(num: number, betValue: number): number {
         throwOnInvalidNum(num);
-        const totalWon = new BN(betValue).muln(CHOOSE_FROM_12_NUMS).divn(getNumSetBits(num));
+        const totalWon = (BigInt(betValue) * BigInt(CHOOSE_FROM_12_NUMS)) / BigInt(getNumSetBits(num));
         return profitFromTotalWon(totalWon, betValue);
     }
 }

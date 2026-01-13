@@ -1,33 +1,30 @@
-import {stripHexPrefix} from "@ethereumjs/util";
-import BN from "bn.js";
-
 import {HOUSE_EDGE, HOUSE_EDGE_DIVISOR, PROBABILITY_DIVISOR} from "../constants";
 import {Hex} from "../types";
 import {concatHexStrings, keccak} from "../utilities";
 
 export function maxBetFromProbability(winProbability: number, bankRoll: number): number {
-    const houseEdge = new BN(HOUSE_EDGE);
-    const probabilityDivisor = new BN(PROBABILITY_DIVISOR);
+    const houseEdge = BigInt(HOUSE_EDGE);
+    const probabilityDivisor = BigInt(PROBABILITY_DIVISOR);
 
-    const tmp1 = probabilityDivisor.muln(HOUSE_EDGE_DIVISOR).divn(winProbability);
-    const tmp2 = probabilityDivisor.mul(houseEdge).divn(winProbability);
+    const tmp1 = (probabilityDivisor * BigInt(HOUSE_EDGE_DIVISOR)) / BigInt(winProbability);
+    const tmp2 = (probabilityDivisor * BigInt(houseEdge)) / BigInt(winProbability);
 
-    const enumerator = houseEdge.mul(new BN(bankRoll));
-    const denominator = tmp1.sub(tmp2).subn(HOUSE_EDGE_DIVISOR);
+    const enumerator = houseEdge * BigInt(bankRoll);
+    const denominator = tmp1 - tmp2 - BigInt(HOUSE_EDGE_DIVISOR);
 
-    if (denominator.ltn(0)) {
+    if (denominator < 0n) {
         throw new Error("Invalid winProbability!");
     }
 
-    return enumerator.div(denominator).toNumber();
+    return Number(enumerator / denominator);
 }
 
-export function generateRandomNumber(serverSeed: string, userSeed: string): BN {
+export function generateRandomNumber(serverSeed: string, userSeed: string): bigint {
     const seed = keccak(concatHexStrings(serverSeed as Hex, userSeed as Hex));
-    return new BN(stripHexPrefix(seed), 16);
+    return BigInt(seed);
 }
 
-export function profitFromTotalWon(totalWon: BN, betValue: number): number {
-    const houseEdge = totalWon.muln(HOUSE_EDGE).divn(HOUSE_EDGE_DIVISOR);
-    return totalWon.sub(houseEdge).sub(new BN(betValue)).toNumber();
+export function profitFromTotalWon(totalWon: bigint, betValue: number): number {
+    const houseEdge = (totalWon * BigInt(HOUSE_EDGE)) / BigInt(HOUSE_EDGE_DIVISOR);
+    return Number(totalWon - houseEdge - BigInt(betValue));
 }
