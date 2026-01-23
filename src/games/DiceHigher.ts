@@ -5,7 +5,7 @@ import {IGame} from "./IGame";
 import {generateRandomNumber, maxBetFromProbability, profitFromTotalWon} from "./utilities";
 
 function throwOnInvalidNum(num: number) {
-    if (num < 0 || num + 1 >= RANGE) {
+    if (num <= 0 || num + 1 >= RANGE) {
         throw new Error(`Invalid number ${num}`);
     }
 }
