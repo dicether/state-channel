@@ -34,6 +34,7 @@ class FlipACoin implements IGame {
     }
 
     maxUserProfit(num: number, betValue: number): number {
+        throwOnInvalidNum(num);
         const totalWon = new BN(betValue).muln(2);
         return profitFromTotalWon(totalWon, betValue);
     }

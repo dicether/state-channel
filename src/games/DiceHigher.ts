@@ -34,6 +34,7 @@ class DiceHigher implements IGame {
     }
 
     maxUserProfit(num: number, betValue: number): number {
+        throwOnInvalidNum(num);
         const totalWon = new BN(betValue).muln(RANGE).divn(RANGE - num - 1);
         return profitFromTotalWon(totalWon, betValue);
     }
