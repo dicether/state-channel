@@ -23,12 +23,12 @@ export function getNumSetBits(num: number): number {
     return getSetBits(num).filter((x) => x).length;
 }
 
-export function fromWeiToGwei(value: string): number {
-    return Number(BigInt(value) / BigInt(1e9));
+export function fromWeiToGwei(value: bigint): number {
+    return Number(value / BigInt(1e9));
 }
 
-export function fromGweiToWei(value: number): string {
-    return (BigInt(value) * BigInt(1e9)).toString();
+export function fromGweiToWei(value: number): bigint {
+    return BigInt(value) * BigInt(1e9);
 }
 
 export function keccak(data: string): Hex {

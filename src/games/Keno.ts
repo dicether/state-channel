@@ -61,7 +61,7 @@ class Keno implements IGame {
         Keno.throwOnInvalidNum(num);
         Keno.throwOnInvalidResultNum(resultNum);
 
-        const hits = getNumSetBits(num & resultNum);
+        const hits = getNumSetBits(Number(BigInt(num) & BigInt(resultNum)));
         const selected = getNumSetBits(num);
 
         return Keno.calcProfit(betValue, selected, hits);

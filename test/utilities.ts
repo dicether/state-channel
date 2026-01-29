@@ -53,7 +53,7 @@ describe("getNumSetBits", () => {
 
 describe("fromWeiToGwei", () => {
     it("conversion", () => {
-        const wei = "1000000000";
+        const wei = 1000000000n;
         const gwei = fromWeiToGwei(wei);
         expect(gwei).to.equal(1);
     });
@@ -63,13 +63,13 @@ describe("fromGweiToWei", () => {
     it("conversion", () => {
         const gwei = 1;
         const wei = fromGweiToWei(gwei);
-        expect(wei).to.equal("1000000000");
+        expect(wei).to.equal(1000000000n);
     });
 });
 
 describe("Wei-Gwei conversion consistency", () => {
     it("should convert Wei to Gwei and back consistently", () => {
-        const originalWei = "1234567890000000000";
+        const originalWei = 1234567890000000000n;
         const gwei = fromWeiToGwei(originalWei);
         const wei = fromGweiToWei(gwei);
         expect(wei).to.equal(originalWei);
